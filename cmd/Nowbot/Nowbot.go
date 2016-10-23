@@ -55,7 +55,7 @@ func utilGetMentioned(s *discordgo.Session, m *discordgo.MessageCreate) *discord
 	return nil
 }
 
-func loreQuery(s *discordgo.Session, m *discordgo.MessageCreate, parts []string, g *discordgo.Guild, msg string) {
+func loreQuery(s *discordgo.Session, m *discordgo.MessageCreate, parts []string, g *discordgo.Guild, msg string) []string {
 	log.Info("Debug: loreQuery start")	
 	
 	// combine string to get query (excluding the command word)
@@ -115,7 +115,7 @@ func handleBotControlMessages(s *discordgo.Session, m *discordgo.MessageCreate, 
 func handleUserCommandMessages(s *discordgo.Session, m *discordgo.MessageCreate, parts []string, g *discordgo.Guild, msg string) {
 	if scontains(parts[0], "!lore") {
 		log.Info("Debug: !lore trying to output")
-		locallorelist = loreQuery(s, m, parts, g, msg)
+		locallorelist := loreQuery(s, m, parts, g, msg)
 		if locallorelist == nil {
 			log.Info("Debug: lorequery failed")
 		} else {
