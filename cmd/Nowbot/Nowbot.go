@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"os"
 	"os/signal"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -54,8 +55,7 @@ func utilGetMentioned(s *discordgo.Session, m *discordgo.MessageCreate) *discord
 
 func loreQuery(s *discordgo.Session, m *discordgo.MessageCreate, parts []string, g *discordgo.Guild, msg string) {
 	log.Info("Debug: loreQuery start")	
-	query := 
-	
+	query := "sword"
 	dir := "D:\\Applications\\Nowbot\\lores"
 	files, _ := ioutil.ReadDir(dir)
 	log.Info("Directory: " + dir)
@@ -65,8 +65,8 @@ func loreQuery(s *discordgo.Session, m *discordgo.MessageCreate, parts []string,
 			if filepath.Ext(file.Name()) == ".txt" {
 				log.Info("File: " + file.Name())
 			}
-			if scontains("sword", file.Name()){
-				log.Info("File contains sword: " + file.Name())
+			if scontains(query, file.Name()){
+				log.Info("File contains: " + query + " : " + file.Name())
 			}
 		}
 	}
