@@ -77,6 +77,15 @@ func handleBotControlMessages(s *discordgo.Session, m *discordgo.MessageCreate, 
 	log.Info("Debug: handleBotControlMessages finished")
 }
 
+// Handles user messages
+func handleUserCommandMessages(s *discordgo.Session, m *discordgo.MessageCreate, parts []string, g *discordgo.Guild, msg string) {
+	if scontains(parts[0], "!lore") {
+		log.Info("Debug: !lore trying to output")
+		s.ChannelMessageSend(m.ChannelID, "!lore with message: " + msg)
+	}
+	log.Info("Debug: handleUserCommandMessages finished")
+}
+
 func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	
 	// print everything to terminal for debugging
@@ -124,12 +133,16 @@ func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 	
-	//Commands go here
-	//if scontains(parts[0], "!nowbot") {
-	//	log.Info("Debug: Nomention, !nowbot trying to output")
-	//	s.ChannelMessageSend(m.ChannelID, "Testing")
-	//	log.Info("Debug: Nomention, !nowbot done trying to output")
- 	//}
+	// do all other commands
+	
+	err := handleUserCommandMessages(s, m, parts, guild, msg)
+	if err != nil {
+		log.WithFields(log.Fields{
+			"channel": m.ChannelID,
+			"message": m.ID,
+		}).Warning("Failed on message")
+		return
+	}
 	
 	log.Info("Debug: onMessageCreate finished...")
 }
