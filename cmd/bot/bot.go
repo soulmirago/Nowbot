@@ -69,7 +69,7 @@ func handleBotControlMessages(s *discordgo.Session, m *discordgo.MessageCreate, 
 	log.Info("Debug: handleBotControlMessages message is... " + parts[0])
 	if scontains(parts[0], "!nowbot") {
 		log.Info("Debug: !nowbot trying to output")
-		s.ChannelMessageSend(m.ChannelID, "Testing").Warning("Failed to output from !nowbot")
+		s.ChannelMessageSend(m.ChannelID, "Testing")
 		log.Info("Debug: !nowbot done trying to output")
  	}
 	log.Info("Debug: handleBotControlMessages finished")
