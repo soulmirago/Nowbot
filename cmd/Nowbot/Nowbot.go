@@ -109,10 +109,11 @@ func loreStats(s *discordgo.Session, m *discordgo.MessageCreate, g *discordgo.Gu
 	
 	// hardcoded for now, change to init file
 	dir := "D:\\Applications\\Nowbot\\lores"
+	log.Info("Directory: " + dir)
 	
 	// create directory
-	files, _ := ioutil.ReadDir(dir)
-	log.Info("Directory: " + dir)
+	//files, _ := ioutil.ReadDir(dir)
+	
 	/*// iterate over all filenames in the directory
 	lorelist := GLOBALLIST
 	for _ , file := range files {
@@ -149,7 +150,7 @@ func handleBotControlMessages(s *discordgo.Session, m *discordgo.MessageCreate, 
 	if scontains(parts[0], "!nowbot") {
 		log.Info("Debug: !nowbot trying to output")
 		s.ChannelMessageSend(m.ChannelID, "Owner !nowbot, with message " + msg)
-		s.ChannelMessageSend(m.ChannelID, "World list is " + strings.Join(GLOBALIST[:], " "))
+		s.ChannelMessageSend(m.ChannelID, "World list is " + strings.Join(GLOBALLIST[:], " "))
 		log.Info("Debug: !nowbot done trying to output")
  	}
 	log.Info("Debug: handleBotControlMessages finished")
@@ -169,7 +170,9 @@ func handleUserCommandMessages(s *discordgo.Session, m *discordgo.MessageCreate,
 	}
 	if scontains(parts[0], "!lorestats") {
 		log.Info("Debug: !lorestats trying to output")
-		loreStats(s, m, g, parts[1])
+		lorehit, err := strconv.Atoi(parts[1])
+		log.Info(err)
+		loreStats(s, m, g, lorehit)
 	}
 	log.Info("Debug: handleUserCommandMessages finished")
 }
