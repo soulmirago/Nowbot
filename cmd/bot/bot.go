@@ -7,6 +7,7 @@ import (
 	"os/signal"
 	"strconv"
 	"strings"
+	"time"
 	
 	log "github.com/Sirupsen/logrus"
 	"github.com/bwmarrin/discordgo"
