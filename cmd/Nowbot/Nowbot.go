@@ -68,10 +68,10 @@ func utilGetMentioned(s *discordgo.Session, m *discordgo.MessageCreate) *discord
 }
 
 // Handles bot operator messages
-func handleBotControlMessages(s *discordgo.Session, m *discordgo.MessageCreate, parts []string, g *discordgo.Guild) {
+func handleBotControlMessages(s *discordgo.Session, m *discordgo.MessageCreate, parts []string, g *discordgo.Guild, msg string) {
 	if scontains(parts[0], "!nowbot") {
 		log.Info("Debug: !nowbot trying to output")
-		s.ChannelMessageSend(m.ChannelID, "Owner !nowbot, with message " + string(parts))
+		s.ChannelMessageSend(m.ChannelID, "Owner !nowbot, with message " + msg)
 		log.Info("Debug: !nowbot done trying to output")
  	}
 	log.Info("Debug: handleBotControlMessages finished")
@@ -119,7 +119,7 @@ func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		}
 
 		if mentioned {
-			handleBotControlMessages(s, m, parts, guild)
+			handleBotControlMessages(s, m, parts, guild, msg)
 		}
 		return
 	}
