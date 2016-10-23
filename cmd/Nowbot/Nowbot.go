@@ -81,7 +81,7 @@ func loreQuery(s *discordgo.Session, m *discordgo.MessageCreate, parts []string,
 			}
 			if matched {
 				lorecount += 1
-				lorelist = append(file.Name())
+				lorelist = append(lorelist, file.Name())
 				log.Info("File contains: " + query + " : " + file.Name())
 			}
 			if lorecount > loremax {
@@ -92,10 +92,10 @@ func loreQuery(s *discordgo.Session, m *discordgo.MessageCreate, parts []string,
 	}
 	
 	//print the lorelist
-	s.ChannelMessageSend(m.ChannelID, "Possible hits (" + lorecount + ")")
-	for _, i := range lorelist {
-		s.ChannelMessageSend(m.ChannelID, i + " :: " + lorelist[i])
-	}
+	//s.ChannelMessageSend(m.ChannelID, "Possible hits (" + lorecount + ")")
+	//for _, i := range lorelist {
+	//	s.ChannelMessageSend(m.ChannelID, i + " :: " + lorelist[i])
+	//}
 	
 	/*
 	var %query $2-
