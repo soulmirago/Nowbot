@@ -66,11 +66,12 @@ func utilGetMentioned(s *discordgo.Session, m *discordgo.MessageCreate) *discord
 
 // Handles bot operator messages, should be refactored (lmao)
 func handleBotControlMessages(s *discordgo.Session, m *discordgo.MessageCreate, parts []string, g *discordgo.Guild) {
-	if scontains(parts[1], "!nowbot") {
-		s.ChannelMessageSend(m.ChannelID, "Testing")
-		log.Info("Debug: Caught !nowbot")
+	log.Info("Debug: handleBotControlMessages message is... " + parts[0])
+	if scontains(parts[0], "!nowbot") {
+		log.Info("Debug: !nowbot trying to output")
+		s.ChannelMessageSend(m.ChannelID, "Testing").Warning("Failed to output from !nowbot")
+		log.Info("Debug: !nowbot done trying to output")
  	}
-	log.Info("Debug: handleBotControlMessages channel is " + m.ChannelID)
 	log.Info("Debug: handleBotControlMessages finished")
 }
 
