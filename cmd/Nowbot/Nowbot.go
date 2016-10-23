@@ -61,16 +61,16 @@ func loreQuery(s *discordgo.Session, m *discordgo.MessageCreate, parts []string,
 	files, _ := ioutil.ReadDir(dir)
 	log.Info("Directory: " + dir)
 	
-	matched, err := regexp.MatchString("foo.*", "seafood")
 	fmt.Println(matched, err)
-	matched, err = regexp.MatchString("bar.*", "seafood")
-	fmt.Println(matched, err)
-	matched, err = regexp.MatchString("a(b", "seafood")
-	fmt.Println(matched, err)
-	
+		
 	for _ , file := range files {
 		if file.Mode().IsRegular() {
-			
+			matched, err := regexp.MatchString(query, strings.ToLower(file.Name()))
+			if err != nil {
+				log.WithFields(log.Fields{
+					"error": err,
+				}).Warning("Regexp error")
+			}
 			if filepath.Ext(file.Name()) == ".txt" {
 				log.Info("File: " + file.Name())
 			}
