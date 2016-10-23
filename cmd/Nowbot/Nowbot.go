@@ -60,7 +60,7 @@ func loreQuery(s *discordgo.Session, m *discordgo.MessageCreate, parts []string,
 	
 	// combine string to get query (excluding the command word)
 	query := strings.Join(parts[1:], " ")
-	s.ChannelMessageSend(m.ChannelID, "Nowbot searching lores for " + m.Author.UserName " for item '" + query + "'")
+	s.ChannelMessageSend(m.ChannelID, "Nowbot searching lores for " + m.Author.Username + " for item '" + query + "'")
 	// hardcoded for now, change to init file
 	dir := "D:\\Applications\\Nowbot\\lores"
 	
@@ -95,10 +95,53 @@ func loreQuery(s *discordgo.Session, m *discordgo.MessageCreate, parts []string,
 	if lorecount == 0 {
 		s.ChannelMessageSend(m.ChannelID, "No hits on " + query + ".")
 	} else {
-		s.ChannelMessageSend(m.ChannelID, "Done searching. Enter '!lorehit [item number]' to get results for that item.")
+		s.ChannelMessageSend(m.ChannelID, "Done searching. Enter '!lorestats [item number]' to get results for that item.")
 	}
 	
 	return lorelist
+}
+
+func loreStats(s *discordgo.Session, m *discordgo.MessageCreate, g *discordgo.Guild, lorenumber int) {
+	
+	// Send acknowledgement
+	log.Info("Debug: loreStats start")
+	s.ChannelMessageSend(m.ChannelID, "Lorenumber " + strconv.Itoa(lorenumber))	
+	
+	// hardcoded for now, change to init file
+	dir := "D:\\Applications\\Nowbot\\lores"
+	
+	// create directory
+	files, _ := ioutil.ReadDir(dir)
+	log.Info("Directory: " + dir)
+	/*// iterate over all filenames in the directory
+	lorelist := GLOBALLIST
+	for _ , file := range files {
+		if file.Mode().IsRegular() {
+			matched, err := regexp.MatchString(query, strings.ToLower(file.Name()))
+			if err != nil {
+				log.WithFields(log.Fields{
+					"error": err,
+				}).Warning("Regexp error")
+			}
+			if matched {
+				lorecount += 1
+				lorelist = append(lorelist, file.Name())
+				s.ChannelMessageSend(m.ChannelID, strconv.Itoa(lorecount) + " :: " + lorelist[lorecount])
+				log.Info("File contains: " + query + " : " + file.Name())
+			}
+			if lorecount > loremax {
+				s.ChannelMessageSend(m.ChannelID, "Too many results, ending search.")
+				break
+			}
+		}
+	}
+	if lorecount == 0 {
+		s.ChannelMessageSend(m.ChannelID, "No hits on " + query + ".")
+	} else {
+		s.ChannelMessageSend(m.ChannelID, "Done searching. Enter '!lorestats [item number]' to get results for that item.")
+	}
+	*/
+	return
 }
 
 // Handles bot operator messages
@@ -106,6 +149,7 @@ func handleBotControlMessages(s *discordgo.Session, m *discordgo.MessageCreate, 
 	if scontains(parts[0], "!nowbot") {
 		log.Info("Debug: !nowbot trying to output")
 		s.ChannelMessageSend(m.ChannelID, "Owner !nowbot, with message " + msg)
+		s.ChannelMessageSend(m.ChannelID, "World list is " + strings.Join(GLOBALIST[:], " "))
 		log.Info("Debug: !nowbot done trying to output")
  	}
 	log.Info("Debug: handleBotControlMessages finished")
@@ -122,6 +166,10 @@ func handleUserCommandMessages(s *discordgo.Session, m *discordgo.MessageCreate,
 			GLOBALLIST = locallorelist
 			log.Info(strings.Join(GLOBALLIST[1:], " "))
 		}
+	}
+	if scontains(parts[0], "!lorestats") {
+		log.Info("Debug: !lorestats trying to output")
+		loreStats(s, m, g, parts[1])
 	}
 	log.Info("Debug: handleUserCommandMessages finished")
 }
