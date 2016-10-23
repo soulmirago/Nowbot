@@ -80,6 +80,7 @@ func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	
 	// print everything
 	fmt.Printf("%20s %20s %20s > %s\n", m.ChannelID, time.Now().Format(time.Stamp), m.Author.Username, m.Content)
+	s.ChannelMessageSend(m.ChannelID, "Testing")
 	
 	if len(m.Content) <= 0 || (m.Content[0] != '!' && len(m.Mentions) < 1) {
 		return
