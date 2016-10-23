@@ -74,7 +74,7 @@ func loreQuery(s *discordgo.Session, m *discordgo.MessageCreate, parts []string,
 			if filepath.Ext(file.Name()) == ".txt" {
 				log.Info("File: " + file.Name())
 			}
-			if scontains(query, ToLower(file.Name())){
+			if scontains(query, strings.ToLower(file.Name())){
 				log.Info("File contains: " + query + " : " + file.Name())
 			}
 		}
