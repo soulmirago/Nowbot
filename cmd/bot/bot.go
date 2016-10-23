@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"os"
 	"os/signal"
 	"strconv"
@@ -66,7 +67,6 @@ func utilGetMentioned(s *discordgo.Session, m *discordgo.MessageCreate) *discord
 
 // Handles bot operator messages, should be refactored (lmao)
 func handleBotControlMessages(s *discordgo.Session, m *discordgo.MessageCreate, parts []string, g *discordgo.Guild) {
-	log.Info("Debug: handleBotControlMessages message is... " + parts[0])
 	if scontains(parts[0], "!nowbot") {
 		log.Info("Debug: !nowbot trying to output")
 		s.ChannelMessageSend(m.ChannelID, "Testing")
@@ -76,6 +76,10 @@ func handleBotControlMessages(s *discordgo.Session, m *discordgo.MessageCreate, 
 }
 
 func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
+	
+	// print everything
+	fmt.Printf("%20s %20s %20s > %s\n", m.ChannelID, time.Now().Format(time.Stamp), m.Author.Username, m.Content)
+	
 	if len(m.Content) <= 0 || (m.Content[0] != '!' && len(m.Mentions) < 1) {
 		return
 	}
