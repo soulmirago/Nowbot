@@ -116,7 +116,7 @@ func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		}
 		return
 	}
-	if scontains(parts, "!nowbot") {
+	if scontains(parts[0], "!nowbot") {
 		log.Info("Debug: Nomention, !nowbot trying to output")
 		s.ChannelMessageSend(m.ChannelID, "Testing")
 		log.Info("Debug: Nomention, !nowbot done trying to output")
