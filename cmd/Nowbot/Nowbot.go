@@ -71,7 +71,7 @@ func utilGetMentioned(s *discordgo.Session, m *discordgo.MessageCreate) *discord
 func handleBotControlMessages(s *discordgo.Session, m *discordgo.MessageCreate, parts []string, g *discordgo.Guild) {
 	if scontains(parts[0], "!nowbot") {
 		log.Info("Debug: !nowbot trying to output")
-		s.ChannelMessageSend(m.ChannelID, "Owner command !nowbot")
+		s.ChannelMessageSend(m.ChannelID, "Owner !nowbot, with message " + parts[1:])
 		log.Info("Debug: !nowbot done trying to output")
  	}
 	log.Info("Debug: handleBotControlMessages finished")
