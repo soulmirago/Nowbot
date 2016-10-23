@@ -33,7 +33,8 @@ var (
 
 func onReady(s *discordgo.Session, event *discordgo.Ready) {
 	log.Info("Recieved READY payload")
-	//s.UpdateStatus(0, "airhornbot.com")
+	//Idletime and Game
+	s.UpdateStatus(0, "ArcticMUD")
 }
 
 /*func onGuildCreate(s *discordgo.Session, event *discordgo.GuildCreate) {
@@ -66,11 +67,11 @@ func utilGetMentioned(s *discordgo.Session, m *discordgo.MessageCreate) *discord
 	return nil
 }
 
-// Handles bot operator messages, should be refactored (lmao)
+// Handles bot operator messages
 func handleBotControlMessages(s *discordgo.Session, m *discordgo.MessageCreate, parts []string, g *discordgo.Guild) {
 	if scontains(parts[0], "!nowbot") {
 		log.Info("Debug: !nowbot trying to output")
-		s.ChannelMessageSend(m.ChannelID, "Testing")
+		s.ChannelMessageSend(m.ChannelID, "Owner command !nowbot")
 		log.Info("Debug: !nowbot done trying to output")
  	}
 	log.Info("Debug: handleBotControlMessages finished")
@@ -78,9 +79,10 @@ func handleBotControlMessages(s *discordgo.Session, m *discordgo.MessageCreate, 
 
 func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	
-	// print everything
+	// print everything to terminal for debugging
 	fmt.Printf("%20s %20s %20s > %s\n", m.ChannelID, time.Now().Format(time.Stamp), m.Author.Username, m.Content)
 	
+	// exit if message is nil, or if does not contain command character @ mention
 	if len(m.Content) <= 0 || (m.Content[0] != '!' && len(m.Mentions) < 1) {
 		return
 	}
@@ -121,11 +123,14 @@ func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		}
 		return
 	}
-	if scontains(parts[0], "!nowbot") {
-		log.Info("Debug: Nomention, !nowbot trying to output")
-		s.ChannelMessageSend(m.ChannelID, "Testing")
-		log.Info("Debug: Nomention, !nowbot done trying to output")
- 	}
+	
+	//Commands go here
+	//if scontains(parts[0], "!nowbot") {
+	//	log.Info("Debug: Nomention, !nowbot trying to output")
+	//	s.ChannelMessageSend(m.ChannelID, "Testing")
+	//	log.Info("Debug: Nomention, !nowbot done trying to output")
+ 	//}
+	
 	log.Info("Debug: onMessageCreate finished...")
 }
 
