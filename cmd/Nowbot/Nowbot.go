@@ -135,14 +135,7 @@ func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	
 	// do all other commands
 	
-	err := handleUserCommandMessages(s, m, parts, guild, msg)
-	if err != nil {
-		log.WithFields(log.Fields{
-			"channel": m.ChannelID,
-			"message": m.ID,
-		}).Warning("Failed on message")
-		return
-	}
+	handleUserCommandMessages(s, m, parts, guild, msg)
 	
 	log.Info("Debug: onMessageCreate finished...")
 }
