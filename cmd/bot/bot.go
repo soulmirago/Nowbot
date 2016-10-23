@@ -84,7 +84,7 @@ func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	if err != nil {
 		log.WithFields(log.Fields{
 			"error": err,
-		}).Warning("Failed to create discord session")
+		}).Warning("Failed to message.")
 	}
 	
 	if len(m.Content) <= 0 || (m.Content[0] != '!' && len(m.Mentions) < 1) {
@@ -159,6 +159,7 @@ func main() {
 	
 	// Create a discord session
 	log.Info("Starting discord session...")
+	log.Info("Token is " + Token)
 	discord, err = discordgo.New(*Token)
 	if err != nil {
 		log.WithFields(log.Fields{
