@@ -53,9 +53,8 @@ func utilGetMentioned(s *discordgo.Session, m *discordgo.MessageCreate) *discord
 }
 
 func loreQuery(s *discordgo.Session, m *discordgo.MessageCreate, parts []string, g *discordgo.Guild, msg string) {
-	log.Info("Debug: loreQuery start")
-	pwd, _ := os.Getwd()
-	dir := pwd + "/lores"
+	log.Info("Debug: loreQuery start")	
+	dir := "D:\Applications\Nowbot\lores"
 	files, _ := ioutil.ReadDir(dir)
 	fmt.Println("Directory: ", dir, "\n")       
 	for _, f := range files {
