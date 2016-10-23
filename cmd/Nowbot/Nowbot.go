@@ -54,16 +54,27 @@ func utilGetMentioned(s *discordgo.Session, m *discordgo.MessageCreate) *discord
 
 func loreQuery(s *discordgo.Session, m *discordgo.MessageCreate, parts []string, g *discordgo.Guild, msg string) {
 	log.Info("Debug: loreQuery start")	
-	dir := "D:\Applications\Nowbot\lores"
+	query := 
+	
+	dir := "D:\\Applications\\Nowbot\\lores"
 	files, _ := ioutil.ReadDir(dir)
-	fmt.Println("Directory: ", dir, "\n")       
-	for _, f := range files {
-		fmt.Println(f.Name())
+	log.Info("Directory: " + dir)
+	
+	for err, file := range files {
+		if file.Mode().IsRegular() {
+			if filepath.Ext(file.Name()) == ".txt" {
+				log.Info("File: " + file.Name())
+			}
+			if scontains("sword", file.Name()){
+				log.Info("File contains sword: " + file.Name())
+			}
+		}
 	}
+	
+	
 		
 	/*
 	var %query $2-
-	var %dir $mircdir $+ Item_Lores\
 	var %string * $+ %query $+ * $+ .txt
 	/set %l.count 0
 	/set %queryer $nick
