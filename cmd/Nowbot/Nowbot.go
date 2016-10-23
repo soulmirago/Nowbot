@@ -34,6 +34,7 @@ var (
 	// Owner
 	OWNER string
 	NOWBOT_ID string
+	GLOBALLIST []string
 )
 
 func scontains(key string, options ...string) bool {
@@ -69,7 +70,7 @@ func loreQuery(s *discordgo.Session, m *discordgo.MessageCreate, parts []string,
 	
 	// iterate over all filenames in the directory
 	lorecount := 0
-	loremax := 10
+	loremax := 6
 	lorelist := []string{""}	
 	for _ , file := range files {
 		if file.Mode().IsRegular() {
@@ -93,43 +94,11 @@ func loreQuery(s *discordgo.Session, m *discordgo.MessageCreate, parts []string,
 	}
 	if lorecount == 0 {
 		s.ChannelMessageSend(m.ChannelID, "No hits on " + query + ".")
+	} else {
+		s.ChannelMessageSend(m.ChannelID, "Done searching. Enter '!lorehit [item number]' to get results for that item.")
 	}
-	else {
-		s.ChannelMessageSend(m.ChannelID, "Done searching.")
-	}
-		
-	/*
-	var %query $2-
-	var %string * $+ %query $+ * $+ .txt
-	/set %l.count 0
-	/set %queryer $nick
-	var %ffile = $findfile(%dir,%string,0, /l.query $1- )
-	//msg $nick ||=====================
-	if ( %ffile != 0 ) {
-		//echo Hits: %ffile
-	}
-	else {
-		//msg $nick || No hits for %query
-	}
-		
-	var %file $1-
-   	var %overmax 9
-	var %maxcount 8
-	/set %l.count 1 + %l.count   
-
-	if ( %l.count == 1 ) {
-		//echo 1 || Possible hits:
-		//msg $nick || Possible hits:
-	}
-	if ( %l.count <= %maxcount ) {
-		//set $+(%,[,%l.count,],[,$site,],Item,) $nopath(%file)
-		//echo 1 || %l.count :: $nopath( %file )
-	//msg $nick || %l.count :: $nopath( %file )
-	}
-	elseif ( %l.count == %overmax ) {
-		/echo 1 Too many results!
-		//msg $nick || Error: Too many results, refine your search.
-	}*/
+	
+	return lorelist
 }
 
 // Handles bot operator messages
@@ -146,8 +115,13 @@ func handleBotControlMessages(s *discordgo.Session, m *discordgo.MessageCreate, 
 func handleUserCommandMessages(s *discordgo.Session, m *discordgo.MessageCreate, parts []string, g *discordgo.Guild, msg string) {
 	if scontains(parts[0], "!lore") {
 		log.Info("Debug: !lore trying to output")
-		s.ChannelMessageSend(m.ChannelID, "!lore with message: " + msg)
-		loreQuery(s, m, parts, g, msg)
+		locallorelist = loreQuery(s, m, parts, g, msg)
+		if locallorelist == nil {
+			log.Info("Debug: lorequery failed")
+		} else {
+			GLOBALLIST = locallorelist
+			log.Info(strings.Join(GLOBALLIST[1:], " "))
+		}
 	}
 	log.Info("Debug: handleUserCommandMessages finished")
 }
