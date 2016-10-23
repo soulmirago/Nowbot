@@ -1,23 +1,14 @@
 package main
 
 import (
-	"bytes"
-	"encoding/binary"
 	"flag"
-	"fmt"
-	"io"
-	"math/rand"
 	"os"
 	"os/signal"
-	"runtime"
 	"strconv"
 	"strings"
-	"text/tabwriter"
-	"time"
-
+	
 	log "github.com/Sirupsen/logrus"
 	"github.com/bwmarrin/discordgo"
-	"github.com/dustin/go-humanize"
 )
 
 var (
@@ -76,8 +67,11 @@ func utilGetMentioned(s *discordgo.Session, m *discordgo.MessageCreate) *discord
 // Handles bot operator messages, should be refactored (lmao)
 func handleBotControlMessages(s *discordgo.Session, m *discordgo.MessageCreate, parts []string, g *discordgo.Guild) {
 	if scontains(parts[1], "!nowbot") {
-		s.ChannelMessageSend(m.ChannelID, "Testing"
-  }
+		s.ChannelMessageSend(m.ChannelID, "Testing")
+		log.Info("Debug: Caught !nowbot")
+ 	}
+	log.Info("Debug: handleBotControlMessages channel is " + m.ChannelID)
+	log.Info("Debug: handleBotControlMessages finished")
 }
 
 func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
@@ -87,7 +81,6 @@ func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 	msg := strings.Replace(m.ContentWithMentionsReplaced(), s.State.Ready.User.Username, "username", 1)
 	parts := strings.Split(strings.ToLower(msg), " ")
-
 	channel, _ := discord.State.Channel(m.ChannelID)
 	if channel == nil {
 		log.WithFields(log.Fields{
@@ -122,6 +115,7 @@ func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		}
 		return
 	}
+	log.Info("Debug: onMessageCreate finished...")
 }
 
 func main() {
@@ -136,8 +130,10 @@ func main() {
 
 	if *Owner != "" {
 		OWNER = *Owner
+		log.Info("Debug: Setting Owner...")
+		log.Info("Debug: Owner is " + OWNER)
 	}
-
+		
 	// Preload
 	//log.Info("Preloading sounds...")
 	//for _, coll := range COLLECTIONS {
