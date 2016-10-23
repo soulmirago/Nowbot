@@ -1,8 +1,10 @@
 package main
 
 import (
+	"bufio"
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"os/signal"
 	"strconv"
@@ -32,6 +34,88 @@ var (
 	NOWBOT_ID string
 )
 
+func scontains(key string, options ...string) bool {
+	for _, item := range options {
+		if item == key {
+			return true
+		}
+	}
+	return false
+}
+
+func utilGetMentioned(s *discordgo.Session, m *discordgo.MessageCreate) *discordgo.User {
+	for _, mention := range m.Mentions {
+		if mention.ID != s.State.Ready.User.ID {
+			return mention
+		}
+	}
+	return nil
+}
+
+func loreQuery(s *discordgo.Session, m *discordgo.MessageCreate, parts []string, g *discordgo.Guild, msg string) {
+	log.Info("Debug: loreQuery start")
+	dir := os.Getwd() + "/lores"
+	files, _ := ioutil.ReadDir(dir)
+	fmt.Println("Directory: ", dir, "\n")       
+	for _, f := range files {
+		fmt.Println(f.Name())
+	}
+		
+	/*
+	var %query $2-
+	var %dir $mircdir $+ Item_Lores\
+	var %string * $+ %query $+ * $+ .txt
+	/set %l.count 0
+	/set %queryer $nick
+	var %ffile = $findfile(%dir,%string,0, /l.query $1- )
+	//msg $nick ||=====================
+	if ( %ffile != 0 ) {
+		//echo Hits: %ffile
+	}
+	else {
+		//msg $nick || No hits for %query
+	}
+		
+	var %file $1-
+   	var %overmax 9
+	var %maxcount 8
+	/set %l.count 1 + %l.count   
+
+	if ( %l.count == 1 ) {
+		//echo 1 || Possible hits:
+		//msg $nick || Possible hits:
+	}
+	if ( %l.count <= %maxcount ) {
+		//set $+(%,[,%l.count,],[,$site,],Item,) $nopath(%file)
+		//echo 1 || %l.count :: $nopath( %file )
+	//msg $nick || %l.count :: $nopath( %file )
+	}
+	elseif ( %l.count == %overmax ) {
+		/echo 1 Too many results!
+		//msg $nick || Error: Too many results, refine your search.
+	}*/
+}
+
+// Handles bot operator messages
+func handleBotControlMessages(s *discordgo.Session, m *discordgo.MessageCreate, parts []string, g *discordgo.Guild, msg string) {
+	if scontains(parts[0], "!nowbot") {
+		log.Info("Debug: !nowbot trying to output")
+		s.ChannelMessageSend(m.ChannelID, "Owner !nowbot, with message " + msg)
+		log.Info("Debug: !nowbot done trying to output")
+ 	}
+	log.Info("Debug: handleBotControlMessages finished")
+}
+
+// Handles user messages
+func handleUserCommandMessages(s *discordgo.Session, m *discordgo.MessageCreate, parts []string, g *discordgo.Guild, msg string) {
+	if scontains(parts[0], "!lore") {
+		log.Info("Debug: !lore trying to output")
+		s.ChannelMessageSend(m.ChannelID, "!lore with message: " + msg)
+		loreQuery(s, m, parts, guild, msg)
+	}
+	log.Info("Debug: handleUserCommandMessages finished")
+}
+
 func onReady(s *discordgo.Session, event *discordgo.Ready) {
 	log.Info("Recieved READY payload")
 	//Idletime and Game
@@ -51,46 +135,15 @@ func onReady(s *discordgo.Session, event *discordgo.Ready) {
 	}
 }*/
 
-func scontains(key string, options ...string) bool {
-	for _, item := range options {
-		if item == key {
-			return true
-		}
-	}
-	return false
-}
-func utilGetMentioned(s *discordgo.Session, m *discordgo.MessageCreate) *discordgo.User {
-	for _, mention := range m.Mentions {
-		if mention.ID != s.State.Ready.User.ID {
-			return mention
-		}
-	}
-	return nil
-}
-
-// Handles bot operator messages
-func handleBotControlMessages(s *discordgo.Session, m *discordgo.MessageCreate, parts []string, g *discordgo.Guild, msg string) {
-	if scontains(parts[0], "!nowbot") {
-		log.Info("Debug: !nowbot trying to output")
-		s.ChannelMessageSend(m.ChannelID, "Owner !nowbot, with message " + msg)
-		log.Info("Debug: !nowbot done trying to output")
- 	}
-	log.Info("Debug: handleBotControlMessages finished")
-}
-
-// Handles user messages
-func handleUserCommandMessages(s *discordgo.Session, m *discordgo.MessageCreate, parts []string, g *discordgo.Guild, msg string) {
-	if scontains(parts[0], "!lore") {
-		log.Info("Debug: !lore trying to output")
-		s.ChannelMessageSend(m.ChannelID, "!lore with message: " + msg)
-	}
-	log.Info("Debug: handleUserCommandMessages finished")
-}
-
 func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	
 	// print everything to terminal for debugging
 	fmt.Printf("%20s %20s %20s > %s\n", m.ChannelID, time.Now().Format(time.Stamp), m.Author.Username, m.Content)
+	
+	// exit if it's Nowbot or another bot talking
+	if (m.Author.ID == NOWBOT_ID || m.Author.Bot) {
+		return
+	}
 	
 	// exit if message is nil, or if does not contain command character @ mention
 	if len(m.Content) <= 0 || (m.Content[0] != '!' && len(m.Mentions) < 1) {
@@ -135,11 +188,6 @@ func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	}
 	
 	// do all other commands
-	//if (m.Author.ID == NOWBOT_ID || m.Author.Bot) {
-	if (m.Author.Bot) {
-		log.Info("Debug: bot is talking or nowbot is talking")
-		return
-	}
 	handleUserCommandMessages(s, m, parts, guild, msg)
 	
 	log.Info("Debug: onMessageCreate finished...")
