@@ -60,7 +60,7 @@ func loreQuery(s *discordgo.Session, m *discordgo.MessageCreate, parts []string,
 	
 	// combine string to get query (excluding the command word)
 	query := strings.Join(parts[1:], " ")
-	
+	s.ChannelMessageSend(m.ChannelID, "Nowbot searching lores for " + m.Author.UserName " for item '" + query + "'")
 	// hardcoded for now, change to init file
 	dir := "D:\\Applications\\Nowbot\\lores"
 	
