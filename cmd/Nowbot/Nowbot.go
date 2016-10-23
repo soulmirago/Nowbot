@@ -91,7 +91,12 @@ func loreQuery(s *discordgo.Session, m *discordgo.MessageCreate, parts []string,
 			}
 		}
 	}
-	s.ChannelMessageSend(m.ChannelID, "Done searching.")
+	if lorecount == 0 {
+		s.ChannelMessageSend(m.ChannelID, "No hits on " + query + ".")
+	}
+	else {
+		s.ChannelMessageSend(m.ChannelID, "Done searching.")
+	}
 		
 	/*
 	var %query $2-
