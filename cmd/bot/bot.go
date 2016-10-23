@@ -82,7 +82,9 @@ func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	fmt.Printf("%20s %20s %20s > %s\n", m.ChannelID, time.Now().Format(time.Stamp), m.Author.Username, m.Content)
 	_, err := s.ChannelMessageSend(m.ChannelID, "Testing")
 	if err != nil {
-		t.Errorf("ChannelMessageSend returned error: %+v", err)
+		log.WithFields(log.Fields{
+			"error": err,
+		}).Warning("Failed to create discord session")
 	}
 	
 	if len(m.Content) <= 0 || (m.Content[0] != '!' && len(m.Mentions) < 1) {
