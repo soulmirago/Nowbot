@@ -70,7 +70,7 @@ func loreQuery(s *discordgo.Session, m *discordgo.MessageCreate, parts []string,
 	// iterate over all filenames in the directory
 	lorecount := 0
 	loremax := 10
-	lorelist := []string{""}
+	lorelist := []string{""}	
 	for _ , file := range files {
 		if file.Mode().IsRegular() {
 			matched, err := regexp.MatchString(query, strings.ToLower(file.Name()))
@@ -94,7 +94,7 @@ func loreQuery(s *discordgo.Session, m *discordgo.MessageCreate, parts []string,
 	//print the lorelist
 	s.ChannelMessageSend(m.ChannelID, "Possible hits (" + lorecount + ")")
 	for _, i := range lorelist {
-		s.ChannelMessageSend(m.ChannelID, i + " :: " + lorelist[i]")
+		s.ChannelMessageSend(m.ChannelID, i + " :: " + lorelist[i])
 	}
 	
 	/*
