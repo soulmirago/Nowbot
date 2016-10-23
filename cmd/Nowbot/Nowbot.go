@@ -56,13 +56,21 @@ func utilGetMentioned(s *discordgo.Session, m *discordgo.MessageCreate) *discord
 
 func loreQuery(s *discordgo.Session, m *discordgo.MessageCreate, parts []string, g *discordgo.Guild, msg string) {
 	log.Info("Debug: loreQuery start")	
-	query := "sword"
+	
+	// combine string to get query (excluding the command word)
+	query := strings.Join(parts[1:])
+	
+	// hardcoded for now, change to init file
 	dir := "D:\\Applications\\Nowbot\\lores"
+	
+	// create directory
 	files, _ := ioutil.ReadDir(dir)
 	log.Info("Directory: " + dir)
 	
-	fmt.Println(matched, err)
-		
+	// iterate over all filenames in the directory
+	lorecount := 0
+	loremax := 10
+	lorelist := []string{""}
 	for _ , file := range files {
 		if file.Mode().IsRegular() {
 			matched, err := regexp.MatchString(query, strings.ToLower(file.Name()))
@@ -71,15 +79,24 @@ func loreQuery(s *discordgo.Session, m *discordgo.MessageCreate, parts []string,
 					"error": err,
 				}).Warning("Regexp error")
 			}
-			if filepath.Ext(file.Name()) == ".txt" {
-				log.Info("File: " + file.Name())
-			}
-			if scontains(query, strings.ToLower(file.Name())){
+			if matched {
+				lorecount += 1
+				lorelist = append(file.Name())
 				log.Info("File contains: " + query + " : " + file.Name())
+			}
+			if lorecount > loremax {
+				s.ChannelMessageSend(m.ChannelID, "Too many results, ending search.")
+				break
 			}
 		}
 	}
-		
+	
+	//print the lorelist
+	s.ChannelMessageSend(m.ChannelID, "Possible hits (" + lorecount + ")")
+	for _, i := range lorelist {
+		s.ChannelMessageSend(m.ChannelID, i + " :: " + lorelist[i]")
+	}
+	
 	/*
 	var %query $2-
 	var %string * $+ %query $+ * $+ .txt
