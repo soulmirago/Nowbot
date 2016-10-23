@@ -153,7 +153,7 @@ func main() {
 	
 	// Create a discord session
 	log.Info("Starting discord session...")
-	log.Info("Token is " + Token)
+	log.Info("Token is " + *Token)
 	discord, err = discordgo.New(*Token)
 	if err != nil {
 		log.WithFields(log.Fields{
