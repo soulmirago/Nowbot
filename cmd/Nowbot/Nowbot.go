@@ -1,7 +1,7 @@
 package main
 
 import (
-	"bufio"
+	//"bufio"
 	"flag"
 	"fmt"
 	"io/ioutil"
@@ -54,7 +54,8 @@ func utilGetMentioned(s *discordgo.Session, m *discordgo.MessageCreate) *discord
 
 func loreQuery(s *discordgo.Session, m *discordgo.MessageCreate, parts []string, g *discordgo.Guild, msg string) {
 	log.Info("Debug: loreQuery start")
-	dir := os.Getwd() + "/lores"
+	pwd, _ := os.Getwd()
+	dir := pwd + "/lores"
 	files, _ := ioutil.ReadDir(dir)
 	fmt.Println("Directory: ", dir, "\n")       
 	for _, f := range files {
@@ -111,7 +112,7 @@ func handleUserCommandMessages(s *discordgo.Session, m *discordgo.MessageCreate,
 	if scontains(parts[0], "!lore") {
 		log.Info("Debug: !lore trying to output")
 		s.ChannelMessageSend(m.ChannelID, "!lore with message: " + msg)
-		loreQuery(s, m, parts, guild, msg)
+		loreQuery(s, m, parts, g, msg)
 	}
 	log.Info("Debug: handleUserCommandMessages finished")
 }
