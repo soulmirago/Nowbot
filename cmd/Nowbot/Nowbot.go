@@ -1,7 +1,7 @@
 package main
 
 import (
-	//"bufio"
+	"bufio"
 	"flag"
 	"fmt"
 	"io/ioutil"
@@ -110,38 +110,26 @@ func loreStats(s *discordgo.Session, m *discordgo.MessageCreate, g *discordgo.Gu
 	// hardcoded for now, change to init file
 	dir := "D:\\Applications\\Nowbot\\lores"
 	log.Info("Directory: " + dir)
+	path := dir + "\\" + GLOBALLIST[lorenumber]
+	log.Info("Directory: " + path)
 	
-	// create directory
-	//files, _ := ioutil.ReadDir(dir)
+	file, err := os.Open(path)
+	if err != nil {
+		log.Info("Debug: loreStats file open problem")
+		return
+	}
+	defer file.Close()
+
+	var lines []string
+	scanner := bufio.NewScanner(file)
+
+	for scanner.Scan() {
+		lines = append(lines, scanner.Text())
+		s.ChannelMessageSend(m.ChannelID, scanner.Text())	
+	}
 	
-	/*// iterate over all filenames in the directory
-	lorelist := GLOBALLIST
-	for _ , file := range files {
-		if file.Mode().IsRegular() {
-			matched, err := regexp.MatchString(query, strings.ToLower(file.Name()))
-			if err != nil {
-				log.WithFields(log.Fields{
-					"error": err,
-				}).Warning("Regexp error")
-			}
-			if matched {
-				lorecount += 1
-				lorelist = append(lorelist, file.Name())
-				s.ChannelMessageSend(m.ChannelID, strconv.Itoa(lorecount) + " :: " + lorelist[lorecount])
-				log.Info("File contains: " + query + " : " + file.Name())
-			}
-			if lorecount > loremax {
-				s.ChannelMessageSend(m.ChannelID, "Too many results, ending search.")
-				break
-			}
-		}
-	}
-	if lorecount == 0 {
-		s.ChannelMessageSend(m.ChannelID, "No hits on " + query + ".")
-	} else {
-		s.ChannelMessageSend(m.ChannelID, "Done searching. Enter '!lorestats [item number]' to get results for that item.")
-	}
-	*/
+	s.ChannelMessageSend(m.ChannelID, "====== Finshed outputing lore ======")
+	
 	return
 }
 
