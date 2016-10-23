@@ -36,7 +36,7 @@ func onReady(s *discordgo.Session, event *discordgo.Ready) {
 	//s.UpdateStatus(0, "airhornbot.com")
 }
 
-func onGuildCreate(s *discordgo.Session, event *discordgo.GuildCreate) {
+/*func onGuildCreate(s *discordgo.Session, event *discordgo.GuildCreate) {
 	if event.Guild.Unavailable != nil {
 		return
 	}
@@ -47,7 +47,7 @@ func onGuildCreate(s *discordgo.Session, event *discordgo.GuildCreate) {
 			return
 		}
 	}
-}
+}*/
 
 func scontains(key string, options ...string) bool {
 	for _, item := range options {
@@ -171,7 +171,7 @@ func main() {
 	}
 
 	discord.AddHandler(onReady)
-	discord.AddHandler(onGuildCreate)
+//	discord.AddHandler(onGuildCreate)
 	discord.AddHandler(onMessageCreate)
 
 	err = discord.Open()
