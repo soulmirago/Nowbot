@@ -29,6 +29,7 @@ var (
 
 	// Owner
 	OWNER string
+	NOWBOT_ID string
 )
 
 func onReady(s *discordgo.Session, event *discordgo.Ready) {
@@ -134,7 +135,10 @@ func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	}
 	
 	// do all other commands
-	
+	if (m.Author.ID == NOWBOT_ID || m.Author.Bot) {
+		log.Info("Debug: bot is talking or nowbot is talking")
+		return
+	}
 	handleUserCommandMessages(s, m, parts, guild, msg)
 	
 	log.Info("Debug: onMessageCreate finished...")
@@ -193,9 +197,14 @@ func main() {
 		return
 	}
 
+	//Create nowbot user const.
+	self := fetchUser(sess, "@me")
+	NOWBOT_ID = self.ID
+	log.Info("Nowbot ID is: " + NOWBOT_ID)
+	
 	// We're running!
 	log.Info("Nowbot ready.")
-
+	
 	// Wait for a signal to quit
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt, os.Kill)
