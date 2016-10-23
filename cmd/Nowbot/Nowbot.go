@@ -7,7 +7,7 @@ import (
 	"io/ioutil"
 	"os"
 	"os/signal"
-	"path/filepath"
+	//"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
@@ -58,8 +58,8 @@ func loreQuery(s *discordgo.Session, m *discordgo.MessageCreate, parts []string,
 	log.Info("Debug: loreQuery start")	
 	
 	// combine string to get query (excluding the command word)
-	query := strings.Join(parts[1:])
-	
+	//query := strings.Join(parts[1:])
+	query := "sword"
 	// hardcoded for now, change to init file
 	dir := "D:\\Applications\\Nowbot\\lores"
 	
