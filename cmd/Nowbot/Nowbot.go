@@ -71,7 +71,8 @@ func loreQuery(s *discordgo.Session, m *discordgo.MessageCreate, parts []string,
 	// iterate over all filenames in the directory
 	lorecount := 0
 	loremax := 6
-	lorelist := []string{""}	
+	lorelist := []string{""}
+	lines := []string{""}
 	for _ , file := range files {
 		if file.Mode().IsRegular() {
 			matched, err := regexp.MatchString(query, strings.ToLower(file.Name()))
@@ -83,15 +84,17 @@ func loreQuery(s *discordgo.Session, m *discordgo.MessageCreate, parts []string,
 			if matched {
 				lorecount += 1
 				lorelist = append(lorelist, file.Name())
-				s.ChannelMessageSend(m.ChannelID, strconv.Itoa(lorecount) + " :: " + lorelist[lorecount])
+				lines = append(lines, strconv.Itoa(lorecount) + " :: " + lorelist[lorecount])				
 				log.Info("File contains: " + query + " : " + file.Name())
 			}
 			if lorecount > loremax {
-				s.ChannelMessageSend(m.ChannelID, "Too many results, ending search.")
+				lines = append(lines, "Too many results, ending search.")
 				break
 			}
 		}
 	}
+	//output results
+	s.ChannelMessageSend(m.ChannelID, strings.Join(lines[0:], "\n"))
 	if lorecount == 0 {
 		s.ChannelMessageSend(m.ChannelID, "No hits on " + query + ".")
 	} else {
