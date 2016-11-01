@@ -125,9 +125,9 @@ func loreStats(s *discordgo.Session, m *discordgo.MessageCreate, g *discordgo.Gu
 
 	for scanner.Scan() {
 		lines = append(lines, scanner.Text())
-		s.ChannelMessageSend(m.ChannelID, scanner.Text())	
 	}
 	
+	s.ChannelMessageSend(m.ChannelID, strings.Join(lines[0:], "\n"))
 	s.ChannelMessageSend(m.ChannelID, "====== Finshed outputing lore ======")
 	
 	return
