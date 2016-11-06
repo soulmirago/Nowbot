@@ -302,7 +302,7 @@ func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	}
 	
 	// exit if message is nil
-	if len(m.Content) <= 0 ) {
+	if len(m.Content) <= 0 {
 		return
 	}
 
