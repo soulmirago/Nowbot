@@ -141,10 +141,10 @@ func loreStats(s *discordgo.Session, m *discordgo.MessageCreate, g *discordgo.Gu
 }
 
 // Starts the bot listening to add lores to the database
-func loreAdd(s *discordgo.Session, m *discordgo.MessageCreate, parts []string, g *discordgo.Guild) {
+func loreAddStart(s *discordgo.Session, m *discordgo.MessageCreate, parts []string, g *discordgo.Guild) {
 
 	// Send acknowledgement
-	log.Info("Debug: loreAdd start")
+	log.Info("Debug: loreAddStart start")
 	if len(parts) < 2 {
 		log.Info("Debug: User didn't enter an argument")
 		s.ChannelMessageSend(m.ChannelID, "Error on !loreadd, you need to enter an item name.")
@@ -161,8 +161,8 @@ func loreAdd(s *discordgo.Session, m *discordgo.MessageCreate, parts []string, g
 // Checks incoming messages to see if they need to be added to an incoming lore
 func loreAddInput(s *discordgo.Session, m *discordgo.MessageCreate, parts []string, g *discordgo.Guild, msg string) {
 
-	// the main handleUserCommandMessages takes care of ending the program 
-	if scontains(parts[0], "!loreend") {
+	// ignore all lines starting with !, since we don't want to write to the lorefile user commands
+	if (m.Content[0] != '!') {
 		return
 	}
 	
@@ -172,7 +172,9 @@ func loreAddInput(s *discordgo.Session, m *discordgo.MessageCreate, parts []stri
 }
 
 // adds lores to database
-func loreEnd(s *discordgo.Session, m *discordgo.MessageCreate, parts []string, g *discordgo.Guild) {
+func loreAddEnd(s *discordgo.Session, m *discordgo.MessageCreate, parts []string, g *discordgo.Guild) {
+	
+	log.Info("Debug: loreAddEnd start")
 	
 	if m.Author.ID != LOREADDUSER_ID {
 		s.ChannelMessageSend(m.ChannelID, "Error, !loreadd not running for " + m.Author.Username + ".")
@@ -234,8 +236,7 @@ func handleUserCommandMessages(s *discordgo.Session, m *discordgo.MessageCreate,
 	
 	// If loreAdd is running and user enters command to end, run the end function.
 	if scontains(parts[0], "!loreend") {
-		log.Info("Debug: !loreend beginning...")
-		loreEnd(s, m, parts, g)
+		loreAddEnd(s, m, parts, g)
 	} 
 	
 	// Search database for hits
@@ -272,8 +273,7 @@ func handleUserCommandMessages(s *discordgo.Session, m *discordgo.MessageCreate,
 	
 	// start the program to add a new lore
 	if scontains(parts[0], "!loreadd") {
-		log.Info("Debug: !loreadd beginning...")
-		loreAdd(s, m, parts, g)
+		loreAddStart(s, m, parts, g)
 	}
 	
 	log.Info("Debug: handleUserCommandMessages finished")
