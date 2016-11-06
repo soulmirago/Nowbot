@@ -162,7 +162,7 @@ func loreAddStart(s *discordgo.Session, m *discordgo.MessageCreate, parts []stri
 func loreAddInput(s *discordgo.Session, m *discordgo.MessageCreate, parts []string, g *discordgo.Guild, msg string) {
 
 	// ignore all lines starting with !, since we don't want to write to the lorefile user commands
-	if (m.Content[0] != '!') {
+	if (m.Content[0] == '!') {
 		return
 	}
 	
