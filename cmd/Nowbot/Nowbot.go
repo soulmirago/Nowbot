@@ -216,7 +216,7 @@ func loreAddEnd(s *discordgo.Session, m *discordgo.MessageCreate, parts []string
 	// reset the input variables for next time
 	LOREADDFLAG = false
 	LOREADDUSER_ID = "0"
-	LOREADDUSER_USERNAME = nil
+	LOREADDUSER_USERNAME = ""
 	LOREADDSTARTTIME = time.Now()
 	LOREADDGLOBALLIST = nil
 	LOREADDITEMNAME = ""
