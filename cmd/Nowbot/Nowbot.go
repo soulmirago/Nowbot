@@ -183,7 +183,7 @@ func handleUserCommandMessages(s *discordgo.Session, m *discordgo.MessageCreate,
 			log.Info("Debug: User didn't enter an argument")
 			s.ChannelMessageSend(m.ChannelID, "Error on !loreadd, you need to enter an item name.")
 		} else {
-			itemname , _ := strings.Join(parts[1:], " ")
+			itemname := strings.Join(parts[1:], " ")
 			s.ChannelMessageSend(m.ChannelID, "Error functionality not available to !loreadd '" + itemname + "'")
 		}
 	}
