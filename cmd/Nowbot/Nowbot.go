@@ -137,7 +137,8 @@ func loreStats(s *discordgo.Session, m *discordgo.MessageCreate, g *discordgo.Gu
 		lines = append(lines, scanner.Text())
 	}
 	
-	output := "Lore #" + strconv.Itoa(lorenumber) + ": " + GLOBALLIST[lorenumber] + "\n" + strings.Join(lines[0:], "\n") + "\n" + "====== Finshed outputing lore ======"
+	itemname := strings.TrimSuffix(GLOBALLIST[lorenumber], ".txt")
+	output := "Lore #" + strconv.Itoa(lorenumber) + ":\n" + itemname + "\n" + strings.Join(lines[0:], "\n") + "\n" + "====== Finshed outputing lore ======"
 	s.ChannelMessageSend(m.ChannelID, output)	
 
 	return
