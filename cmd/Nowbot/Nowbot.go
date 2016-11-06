@@ -175,10 +175,11 @@ func loreAddInput(s *discordgo.Session, m *discordgo.MessageCreate, parts []stri
 func loreEnd(s *discordgo.Session, m *discordgo.MessageCreate, parts []string, g *discordgo.Guild) {
 	
 	if m.Author.ID != LOREADDUSER_ID {
-		s.ChannelMessageSend(m.ChannelID, "Lore-end Error, not same user.")
+		s.ChannelMessageSend(m.ChannelID, "Error, !loreadd not running for " + m.Author.Username + ".")
 		return
 	}
 	
+	// reset the input variables for next time
 	LOREADDSTARTTIME = time.Now()
 	LOREADDUSER_ID = "0"
 	s.ChannelMessageSend(m.ChannelID, "Finished inputting lore.")
