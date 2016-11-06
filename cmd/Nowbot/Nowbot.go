@@ -36,7 +36,7 @@ var (
 	NOWBOT_ID string
 	GLOBALLIST []string
 	
-	LOREADDUSER string
+	LOREADDUSER_ID string
 	LOREADDGLOBALLIST []string
 	LOREADDSTARTTIME = time.Now()
 )
@@ -140,7 +140,7 @@ func loreStats(s *discordgo.Session, m *discordgo.MessageCreate, g *discordgo.Gu
 	return
 }
 
-// adds lores to database
+// Starts the bot listening to add lores to the database
 func loreAdd(s *discordgo.Session, m *discordgo.MessageCreate, parts []string, g *discordgo.Guild) {
 
 	// Send acknowledgement
@@ -150,15 +150,32 @@ func loreAdd(s *discordgo.Session, m *discordgo.MessageCreate, parts []string, g
 		s.ChannelMessageSend(m.ChannelID, "Error on !loreadd, you need to enter an item name.")
 	} else {
 		s.ChannelMessageSend(m.ChannelID, "Starting !loreadd program...")	
-		// start program
-		itemname := strings.Join(parts[1:], " ")
+		LOREADDSTARTTIME = time.Now()
+		LOREADDUSER_ID = m.Author.ID
+		itemname := strings.Join(parts[1:], " ")			
 		s.ChannelMessageSend(m.ChannelID, "Error: functionality not available to !loreadd '" + itemname + "'")
 	}
 	return
 }
 
+// Checks incoming messages to see if they need to be added to an incoming lore
+func loreAddInput(s *discordgo.Session, m *discordgo.MessageCreate, parts []string, g *discordgo.Guild, msg string) {
+
+	// the main handleUserCommandMessages takes care of ending the program 
+	if scontains(parts[0], "!loreend") {
+		return
+	}
+	
+	log.Info("Debug: loreAddInput adding:" + msg)
+	
+	return
+}
+
 // adds lores to database
 func loreEnd(s *discordgo.Session, m *discordgo.MessageCreate, parts []string, g *discordgo.Guild) {
+	
+	LOREADDSTARTTIME = nil
+	LOREADDUSER_ID = nil
 	
 	/*// Send acknowledgement
 	log.Info("Debug: loreAdd start")
@@ -209,13 +226,10 @@ func handleBotControlMessages(s *discordgo.Session, m *discordgo.MessageCreate, 
 func handleUserCommandMessages(s *discordgo.Session, m *discordgo.MessageCreate, parts []string, g *discordgo.Guild, msg string) {
 	
 	// If loreAdd is running and user enters command to end, run the end function.
-	// If not ending, check if it needs to add more info to a running olore.
-	if scontains(parts[0], "!loreend") {
+	if (scontains(parts[0], "!loreend") && m.Author.ID == LOREADDUSER_ID) {
 		log.Info("Debug: !loreend beginning...")
 		loreEnd(s, m, parts, g)
-	} else {
-		loreEnd(s, m, parts, g)
-	}
+	} 
 	
 	// Search database for hits
 	if scontains(parts[0], "!lore") {
@@ -287,13 +301,20 @@ func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 	
-	// exit if message is nil, or if does not contain command character @ mention
-	if len(m.Content) <= 0 || (m.Content[0] != '!' && len(m.Mentions) < 1) {
+	// exit if message is nil
+	if len(m.Content) <= 0 ) {
 		return
 	}
 
+	// clean up message
 	msg := strings.Replace(m.ContentWithMentionsReplaced(), s.State.Ready.User.Username, "username", 1)
 	parts := strings.Split(strings.ToLower(msg), " ")
+	
+	// If author is currently adding a lore, run the lore program
+	if (m.Author.ID == LOREADDUSER_ID) {
+		loreAddInput(s, m, parts, guild, msg)
+	}
+
 	channel, _ := discord.State.Channel(m.ChannelID)
 	if channel == nil {
 		log.WithFields(log.Fields{
@@ -312,7 +333,12 @@ func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		}).Warning("Failed to grab guild")
 		return
 	}
-
+		
+	// exit if message does not contain command character @ mention
+	if (m.Content[0] != '!' && len(m.Mentions) < 1) {
+		return
+	}
+	
 	// If this is a mention, it should come from the owner (otherwise we don't care)
 	if len(m.Mentions) > 0 && m.Author.ID == OWNER && len(parts) > 0 {
 		mentioned := false
