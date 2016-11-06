@@ -152,8 +152,7 @@ func loreAdd(s *discordgo.Session, m *discordgo.MessageCreate, parts []string, g
 	log.Info("Directory: " + dir)
 	path := dir + "\\" + itemname + ".txt"
 	log.Info("Directory: " + path)
-	
-	/*
+		
 	file, err := os.Create(path)
 	if err != nil {
 		log.Info("Debug: loreStats file open problem")
@@ -161,16 +160,14 @@ func loreAdd(s *discordgo.Session, m *discordgo.MessageCreate, parts []string, g
 	}
 	defer file.Close()
 
-	var lines []string
-	scanner := bufio.NewScanner(file)
+	w := bufio.NewWriter(file)
+	var line string
+	line, err := w.WriteString(itemname)
+	log.Info("Wrote to file: " + line)
+	w.Flush()
 
-	for scanner.Scan() {
-		lines = append(lines, scanner.Text())
-	}
+	s.ChannelMessageSend(m.ChannelID, "====== Finshed adding lore ======")
 	
-	s.ChannelMessageSend(m.ChannelID, strings.Join(lines[0:], "\n"))
-	s.ChannelMessageSend(m.ChannelID, "====== Finshed outputing lore ======")
-	*/
 	return
 }
 
