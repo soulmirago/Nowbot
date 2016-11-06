@@ -174,9 +174,15 @@ func loreAddInput(s *discordgo.Session, m *discordgo.MessageCreate, parts []stri
 // adds lores to database
 func loreEnd(s *discordgo.Session, m *discordgo.MessageCreate, parts []string, g *discordgo.Guild) {
 	
+	if m.Author.ID != LOREADDUSER_ID {
+		s.ChannelMessageSend(m.ChannelID, "Lore-end Error, not same user.")
+		return
+	}
+	
 	LOREADDSTARTTIME = time.Now()
 	LOREADDUSER_ID = "0"
-	
+	s.ChannelMessageSend(m.ChannelID, "Finished inputting lore.")
+		
 	/*// Send acknowledgement
 	log.Info("Debug: loreAdd start")
 	s.ChannelMessageSend(m.ChannelID, "Starting !loreadd program...")	
