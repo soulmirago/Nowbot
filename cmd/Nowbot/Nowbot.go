@@ -232,7 +232,7 @@ func loreAddEnd(s *discordgo.Session, m *discordgo.MessageCreate, parts []string
 		
 		// log who added the lore
 		t := time.Now()
-		w.WriteString(t.Format("2006-01-02") + " by " + LOREADDUSER_USERNAME)
+		w.WriteString(t.Format("2006-01-02") + " by " + LOREADDUSER_USERNAME + "\n" + "test")
 		w.Flush()
 		
 		s.ChannelMessageSend(m.ChannelID, "Finished inputting lore for '" + LOREADDITEMNAME + "' for " + LOREADDUSER_USERNAME + ".")
