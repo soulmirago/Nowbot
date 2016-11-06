@@ -137,7 +137,7 @@ func loreStats(s *discordgo.Session, m *discordgo.MessageCreate, g *discordgo.Gu
 }
 
 // adds lores to database
-func loreAdd(s *discordgo.Session, m *discordgo.MessageCreate, g *discordgo.Guild) {
+func loreAdd(s *discordgo.Session, m *discordgo.MessageCreate, parts []string, g *discordgo.Guild) {
 	
 	// Send acknowledgement
 	log.Info("Debug: loreAdd start")
@@ -221,7 +221,7 @@ func handleUserCommandMessages(s *discordgo.Session, m *discordgo.MessageCreate,
 			log.Info("Debug: User didn't enter an argument")
 			s.ChannelMessageSend(m.ChannelID, "Error on !loreadd, you need to enter an item name.")
 		} else {
-			loreAdd(s, m, g)
+			loreAdd(s, m, parts, g)
 		}
 	}
 	log.Info("Debug: handleUserCommandMessages finished")
