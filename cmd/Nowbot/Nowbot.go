@@ -138,8 +138,7 @@ func loreStats(s *discordgo.Session, m *discordgo.MessageCreate, g *discordgo.Gu
 		lines = append(lines, scanner.Text())
 	}
 	
-	s.ChannelMessageSend(m.ChannelID, strings.Join(lines[0:], "\n"))
-	s.ChannelMessageSend(m.ChannelID, "====== Finshed outputing lore ======")
+	s.ChannelMessageSend(m.ChannelID, strings.Join(lines[0:], "\n") + "\n" + "====== Finshed outputing lore ======")
 	
 	return
 }
@@ -211,8 +210,7 @@ func loreAddEnd(s *discordgo.Session, m *discordgo.MessageCreate, parts []string
 		s.ChannelMessageSend(m.ChannelID, "Loreadd error: User entered a blank lore, aborting !loreadd.")
 	} else {
 		// output lore
-		s.ChannelMessageSend(m.ChannelID, "Full lore was:")
-		s.ChannelMessageSend(m.ChannelID, lines)
+		s.ChannelMessageSend(m.ChannelID, "Full lore was:" + "\n" + lines)		
 		s.ChannelMessageSend(m.ChannelID, "Finished inputting lore for '" + LOREADDITEMNAME + "' for " + LOREADDUSER_USERNAME + ".")
 	}
 	
