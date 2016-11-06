@@ -35,6 +35,10 @@ var (
 	OWNER string
 	NOWBOT_ID string
 	GLOBALLIST []string
+	
+	LOREADDUSER string
+	LOREADDGLOBALLIST []string
+	LOREADDSTARTTIME = time.Now()
 )
 
 func scontains(key string, options ...string) bool {
@@ -138,8 +142,25 @@ func loreStats(s *discordgo.Session, m *discordgo.MessageCreate, g *discordgo.Gu
 
 // adds lores to database
 func loreAdd(s *discordgo.Session, m *discordgo.MessageCreate, parts []string, g *discordgo.Guild) {
-	
+
 	// Send acknowledgement
+	log.Info("Debug: loreAdd start")
+	if len(parts) < 2 {
+		log.Info("Debug: User didn't enter an argument")
+		s.ChannelMessageSend(m.ChannelID, "Error on !loreadd, you need to enter an item name.")
+	} else {
+		s.ChannelMessageSend(m.ChannelID, "Starting !loreadd program...")	
+		// start program
+		itemname := strings.Join(parts[1:], " ")
+		s.ChannelMessageSend(m.ChannelID, "Error: functionality not available to !loreadd '" + itemname + "'")
+	}
+	return
+}
+
+// adds lores to database
+func loreEnd(s *discordgo.Session, m *discordgo.MessageCreate, parts []string, g *discordgo.Guild) {
+	
+	/*// Send acknowledgement
 	log.Info("Debug: loreAdd start")
 	s.ChannelMessageSend(m.ChannelID, "Starting !loreadd program...")	
 	
@@ -173,7 +194,6 @@ func loreAdd(s *discordgo.Session, m *discordgo.MessageCreate, parts []string, g
 	return
 }
 
-
 // Handles bot operator messages
 func handleBotControlMessages(s *discordgo.Session, m *discordgo.MessageCreate, parts []string, g *discordgo.Guild, msg string) {
 	if scontains(parts[0], "!nowbot") {
@@ -187,6 +207,17 @@ func handleBotControlMessages(s *discordgo.Session, m *discordgo.MessageCreate, 
 
 // Handles user messages
 func handleUserCommandMessages(s *discordgo.Session, m *discordgo.MessageCreate, parts []string, g *discordgo.Guild, msg string) {
+	
+	// If loreAdd is running and user enters command to end, run the end function.
+	// If not ending, check if it needs to add more info to a running olore.
+	if scontains(parts[0], "!loreend") {
+		log.Info("Debug: !loreend beginning...")
+		loreEnd(s, m, parts, g)
+	} else {
+		loreEnd(s, m, parts, g)
+	}
+	
+	// Search database for hits
 	if scontains(parts[0], "!lore") {
 		log.Info("Debug: !lore trying to output")
 		locallorelist := loreQuery(s, m, parts, g, msg)
@@ -197,6 +228,8 @@ func handleUserCommandMessages(s *discordgo.Session, m *discordgo.MessageCreate,
 			log.Info(strings.Join(GLOBALLIST[1:], " "))
 		}
 	}
+	
+	// return results from search on database
 	if scontains(parts[0], "!lorestats") {
 		log.Info("Debug: !lorestats trying to output")
 		if len(parts) < 2 {
@@ -215,15 +248,13 @@ func handleUserCommandMessages(s *discordgo.Session, m *discordgo.MessageCreate,
 			}
 		}
 	}
+	
+	// start the program to add a new lore
 	if scontains(parts[0], "!loreadd") {
 		log.Info("Debug: !loreadd beginning...")
-		if len(parts) < 2 {
-			log.Info("Debug: User didn't enter an argument")
-			s.ChannelMessageSend(m.ChannelID, "Error on !loreadd, you need to enter an item name.")
-		} else {
-			loreAdd(s, m, parts, g)
-		}
+		loreAdd(s, m, parts, g)
 	}
+	
 	log.Info("Debug: handleUserCommandMessages finished")
 }
 
