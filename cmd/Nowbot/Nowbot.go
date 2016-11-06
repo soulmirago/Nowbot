@@ -36,14 +36,13 @@ var (
 	NOWBOT_ID string
 	GLOBALLIST []string
 	
+	// Global variables for Lorebot
 	LOREADDFLAG = false
 	LOREADDUSER_ID string
 	LOREADDUSER_USERNAME string
 	LOREADDSTARTTIME = time.Now()
 	LOREADDGLOBALLIST []string
-	LOREADDITEMNAME string
-	
-	
+	LOREADDITEMNAME string	
 )
 
 func scontains(key string, options ...string) bool {
@@ -208,10 +207,14 @@ func loreAddEnd(s *discordgo.Session, m *discordgo.MessageCreate, parts []string
 	// todo add error checking
 	lines := strings.Join(LOREADDGLOBALLIST[0:], "\n")
 	
-	// output lore
-	s.ChannelMessageSend(m.ChannelID, "Full lore was:")
-	s.ChannelMessageSend(m.ChannelID, lines)
-	s.ChannelMessageSend(m.ChannelID, "Finished inputting lore for '" + LOREADDITEMNAME + "' for " + LOREADDUSER_USERNAME + ".")
+	if len(lines) == 0 {
+		s.ChannelMessageSend(m.ChannelID, "Loreadd error: User entered a blank lore, aborting !loreadd.")
+	} else {
+		// output lore
+		s.ChannelMessageSend(m.ChannelID, "Full lore was:")
+		s.ChannelMessageSend(m.ChannelID, lines)
+		s.ChannelMessageSend(m.ChannelID, "Finished inputting lore for '" + LOREADDITEMNAME + "' for " + LOREADDUSER_USERNAME + ".")
+	}
 	
 	// reset the input variables for next time
 	LOREADDFLAG = false
