@@ -233,7 +233,7 @@ func handleBotControlMessages(s *discordgo.Session, m *discordgo.MessageCreate, 
 func handleUserCommandMessages(s *discordgo.Session, m *discordgo.MessageCreate, parts []string, g *discordgo.Guild, msg string) {
 	
 	// If loreAdd is running and user enters command to end, run the end function.
-	if scontains(parts[0], "!loreend") && m.Author.ID == LOREADDUSER_ID {
+	if scontains(parts[0], "!loreend") {
 		log.Info("Debug: !loreend beginning...")
 		loreEnd(s, m, parts, g)
 	} 
