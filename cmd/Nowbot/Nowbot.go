@@ -212,6 +212,29 @@ func loreAddEnd(s *discordgo.Session, m *discordgo.MessageCreate, parts []string
 	} else {
 		// output lore
 		s.ChannelMessageSend(m.ChannelID, "Full lore was:" + "\n" + lines)		
+						
+		// hardcoded for now, change to init file
+		dir := "D:\\Applications\\Nowbot\\lores"
+		log.Info("Directory: " + dir)
+		path := dir + "\\" + LOREADDITEMNAME + ".txt"
+		log.Info("Directory: " + path)
+		
+		/*
+		file, err := os.Create(path)
+		if err != nil {
+			log.Info("Debug: loreStats file open problem")
+			return
+		}
+		defer file.Close()
+	
+		w := bufio.NewWriter(file)
+	
+		w.WriteString(itemname)
+		log.Info("Wrote to file: " + itemname)
+		
+		w.Flush()
+	
+		*/
 		s.ChannelMessageSend(m.ChannelID, "Finished inputting lore for '" + LOREADDITEMNAME + "' for " + LOREADDUSER_USERNAME + ".")
 	}
 	
@@ -223,37 +246,6 @@ func loreAddEnd(s *discordgo.Session, m *discordgo.MessageCreate, parts []string
 	LOREADDGLOBALLIST = nil
 	LOREADDITEMNAME = ""
 	
-	/*// Send acknowledgement
-	log.Info("Debug: loreAdd start")
-	s.ChannelMessageSend(m.ChannelID, "Starting !loreadd program...")	
-	
-	// start program
-	itemname := strings.Join(parts[1:], " ")
-	s.ChannelMessageSend(m.ChannelID, "Error: functionality not available to !loreadd '" + itemname + "'")
-	
-	// hardcoded for now, change to init file
-	dir := "D:\\Applications\\Nowbot\\lores"
-	log.Info("Directory: " + dir)
-	path := dir + "\\" + itemname + ".txt"
-	log.Info("Directory: " + path)
-	
-	/*
-	file, err := os.Create(path)
-	if err != nil {
-		log.Info("Debug: loreStats file open problem")
-		return
-	}
-	defer file.Close()
-
-	w := bufio.NewWriter(file)
-	
-	w.WriteString(itemname)
-	log.Info("Wrote to file: " + itemname)
-	
-	w.Flush()
-
-	s.ChannelMessageSend(m.ChannelID, "====== Finshed adding lore ======")
-	*/
 	return
 }
 
