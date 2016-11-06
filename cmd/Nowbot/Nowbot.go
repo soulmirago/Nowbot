@@ -147,13 +147,14 @@ func loreAdd(s *discordgo.Session, m *discordgo.MessageCreate, parts []string, g
 	itemname := strings.Join(parts[1:], " ")
 	s.ChannelMessageSend(m.ChannelID, "Error: functionality not available to !loreadd '" + itemname + "'")
 	
-	/* hardcoded for now, change to init file
+	// hardcoded for now, change to init file
 	dir := "D:\\Applications\\Nowbot\\lores"
 	log.Info("Directory: " + dir)
-	path := dir + "\\" + GLOBALLIST[lorenumber]
+	path := dir + "\\" + itemname + ".txt"
 	log.Info("Directory: " + path)
 	
-	file, err := os.Open(path)
+	/*
+	file, err := os.Create(path)
 	if err != nil {
 		log.Info("Debug: loreStats file open problem")
 		return
