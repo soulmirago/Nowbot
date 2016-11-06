@@ -210,8 +210,8 @@ func loreAddEnd(s *discordgo.Session, m *discordgo.MessageCreate, parts []string
 	if len(lines) == 0 {
 		s.ChannelMessageSend(m.ChannelID, "Loreadd error: User entered a blank lore, aborting !loreadd.")
 	} else {
-		// output lore
-		s.ChannelMessageSend(m.ChannelID, "Full lore was:" + "\n" + lines)		
+		// output lore for debug
+		//s.ChannelMessageSend(m.ChannelID, "Full lore was:" + "\n" + lines)		
 						
 		// hardcoded for now, change to init file
 		dir := "D:\\Applications\\Nowbot\\lores"
