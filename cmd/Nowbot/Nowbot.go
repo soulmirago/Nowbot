@@ -161,14 +161,14 @@ func loreAddStart(s *discordgo.Session, m *discordgo.MessageCreate, parts []stri
 		log.Info("Debug: User didn't enter an argument")
 		s.ChannelMessageSend(m.ChannelID, "Error on !loreadd, you need to enter an item name.")
 	} else {
-		s.ChannelMessageSend(m.ChannelID, "Starting !loreadd program...")	
 		LOREADDFLAG = true
 		LOREADDSTARTTIME = time.Now()
 		LOREADDUSER_ID = m.Author.ID
 		LOREADDUSER_USERNAME = m.Author.Username
 		itemname := strings.Join(parts[1:], " ")			
 		LOREADDITEMNAME = itemname
-		s.ChannelMessageSend(m.ChannelID, "Error: functionality not available to !loreadd '" + itemname + "'")
+		s.ChannelMessageSend(m.ChannelID, "Adding lore for '" + itemname + "' for " + m.Author.Username + ". \n" + "Paste information and type !loreend to end.")
+		
 	}
 	return
 }
