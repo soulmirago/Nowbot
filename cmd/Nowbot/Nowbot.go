@@ -38,6 +38,7 @@ var (
 	
 	LOREADDFLAG = false
 	LOREADDUSER_ID string
+	LOREADDUSER_USERNAME string
 	LOREADDSTARTTIME = time.Now()
 	LOREADDGLOBALLIST []string
 	LOREADDITEMNAME string
@@ -153,7 +154,7 @@ func loreAddStart(s *discordgo.Session, m *discordgo.MessageCreate, parts []stri
 	// check to see if a loreadd is already running
 	
 	if LOREADDFLAG {
-		s.ChannelMessageSend(m.ChannelID, "Error on !loreadd, program already running, wait until !loreend.")
+		s.ChannelMessageSend(m.ChannelID, "Error on !loreadd, program already running for " + LOREADDUSER_USERNAME + ", wait until !loreend.")
 		return
 	}
 		
@@ -164,7 +165,8 @@ func loreAddStart(s *discordgo.Session, m *discordgo.MessageCreate, parts []stri
 		s.ChannelMessageSend(m.ChannelID, "Starting !loreadd program...")	
 		LOREADDFLAG = true
 		LOREADDSTARTTIME = time.Now()
-		LOREADDUSER_ID = m.Author.ID		
+		LOREADDUSER_ID = m.Author.ID
+		LOREADDUSER_USERNAME = m.Author.Username
 		itemname := strings.Join(parts[1:], " ")			
 		LOREADDITEMNAME = itemname
 		s.ChannelMessageSend(m.ChannelID, "Error: functionality not available to !loreadd '" + itemname + "'")
@@ -209,11 +211,12 @@ func loreAddEnd(s *discordgo.Session, m *discordgo.MessageCreate, parts []string
 	// output lore
 	s.ChannelMessageSend(m.ChannelID, "Full lore was:")
 	s.ChannelMessageSend(m.ChannelID, lines)
-	s.ChannelMessageSend(m.ChannelID, "Finished inputting lore for '" + LOREADDITEMNAME + "'.")
+	s.ChannelMessageSend(m.ChannelID, "Finished inputting lore for '" + LOREADDITEMNAME + "' for " + LOREADDUSER_USERNAME + ".")
 	
 	// reset the input variables for next time
 	LOREADDFLAG = false
 	LOREADDUSER_ID = "0"
+	LOREADDUSER_USERNAME = nil
 	LOREADDSTARTTIME = time.Now()
 	LOREADDGLOBALLIST = nil
 	LOREADDITEMNAME = ""
