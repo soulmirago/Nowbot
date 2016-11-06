@@ -91,7 +91,7 @@ func loreQuery(s *discordgo.Session, m *discordgo.MessageCreate, parts []string,
 			}
 			if matched {
 				lorecount += 1
-				lorelist = append(lorelist, strings.TrimSuffix(file.Name(), ".txt")
+				lorelist = append(lorelist, strings.TrimSuffix(file.Name(), ".txt"))
 				lines = append(lines, strconv.Itoa(lorecount) + " :: " + lorelist[lorecount])				
 				log.Info("File contains: " + query + " : " + file.Name())
 			}
