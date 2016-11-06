@@ -168,8 +168,8 @@ func loreAddStart(s *discordgo.Session, m *discordgo.MessageCreate, parts []stri
 		itemname := strings.Join(parts[1:], " ")			
 		LOREADDITEMNAME = itemname
 		s.ChannelMessageSend(m.ChannelID, "Adding lore for '" + itemname + "' for " + m.Author.Username + ". \n" + "Paste information and type !loreend to end.")
-		
 	}
+	
 	return
 }
 
@@ -225,10 +225,11 @@ func loreAddEnd(s *discordgo.Session, m *discordgo.MessageCreate, parts []string
 			return
 		}
 		defer file.Close()
-	
+		
+		t = time.Now()
 		w := bufio.NewWriter(file)
 		w.WriteString(lines)
-		w.WriteString("Timestamp " + "and " + LOREADDUSER_USERNAME)
+		w.WriteString(t.Format("2006-01-02") + " by " + LOREADDUSER_USERNAME)
 		w.Flush()
 		
 		s.ChannelMessageSend(m.ChannelID, "Finished inputting lore for '" + LOREADDITEMNAME + "' for " + LOREADDUSER_USERNAME + ".")
