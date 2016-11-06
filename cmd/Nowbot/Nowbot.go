@@ -177,6 +177,16 @@ func handleUserCommandMessages(s *discordgo.Session, m *discordgo.MessageCreate,
 			}
 		}
 	}
+	if scontains(parts[0], "!loreadd") {
+		log.Info("Debug: !loreadd beginning...")
+		if len(parts) < 2 {
+			log.Info("Debug: User didn't enter an argument")
+			s.ChannelMessageSend(m.ChannelID, "Error on !loreadd, you need to enter an item name.")
+		} else {
+			itemname , _ := strings.Join(parts[1:], " ")
+			s.ChannelMessageSend(m.ChannelID, "Error functionality not available to !loreadd '" + itemname + "'")
+		}
+	}
 	log.Info("Debug: handleUserCommandMessages finished")
 }
 
