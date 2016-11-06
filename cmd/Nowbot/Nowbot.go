@@ -262,7 +262,7 @@ func handleUserCommandMessages(s *discordgo.Session, m *discordgo.MessageCreate,
 			}
 		}
 	}
-	
+	di
 	// start the program to add a new lore
 	if scontains(parts[0], "!loreadd") {
 		log.Info("Debug: !loreadd beginning...")
@@ -297,9 +297,9 @@ func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	fmt.Printf("%20s %20s %20s > %s\n", m.ChannelID, time.Now().Format(time.Stamp), m.Author.Username, m.Content)
 	
 	// exit if it's Nowbot or another bot talking
-	/*if (m.Author.ID == NOWBOT_ID || m.Author.Bot) {
+	if (m.Author.ID == NOWBOT_ID || m.Author.Bot) {
 		return
-	}*/
+	}
 	
 	// exit if message is nil
 	if len(m.Content) <= 0 ) {
