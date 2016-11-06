@@ -174,7 +174,7 @@ func loreAddInput(s *discordgo.Session, m *discordgo.MessageCreate, parts []stri
 // adds lores to database
 func loreEnd(s *discordgo.Session, m *discordgo.MessageCreate, parts []string, g *discordgo.Guild) {
 	
-	LOREADDSTARTTIME = 0
+	LOREADDSTARTTIME = time.Now()
 	LOREADDUSER_ID = "0"
 	
 	/*// Send acknowledgement
