@@ -174,8 +174,8 @@ func loreAddInput(s *discordgo.Session, m *discordgo.MessageCreate, parts []stri
 // adds lores to database
 func loreEnd(s *discordgo.Session, m *discordgo.MessageCreate, parts []string, g *discordgo.Guild) {
 	
-	LOREADDSTARTTIME = nil
-	LOREADDUSER_ID = nil
+	LOREADDSTARTTIME = 0
+	LOREADDUSER_ID = "0"
 	
 	/*// Send acknowledgement
 	log.Info("Debug: loreAdd start")
@@ -309,12 +309,7 @@ func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	// clean up message
 	msg := strings.Replace(m.ContentWithMentionsReplaced(), s.State.Ready.User.Username, "username", 1)
 	parts := strings.Split(strings.ToLower(msg), " ")
-	
-	// If author is currently adding a lore, run the lore program
-	if (m.Author.ID == LOREADDUSER_ID) {
-		loreAddInput(s, m, parts, guild, msg)
-	}
-
+		
 	channel, _ := discord.State.Channel(m.ChannelID)
 	if channel == nil {
 		log.WithFields(log.Fields{
@@ -333,7 +328,12 @@ func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		}).Warning("Failed to grab guild")
 		return
 	}
-		
+	
+	// If author is currently adding a lore, run the lore program
+	if (m.Author.ID == LOREADDUSER_ID) {
+		loreAddInput(s, m, parts, guild, msg)
+	}
+	
 	// exit if message does not contain command character @ mention
 	if (m.Content[0] != '!' && len(m.Mentions) < 1) {
 		return
