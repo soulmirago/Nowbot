@@ -205,7 +205,7 @@ func loreAddEnd(s *discordgo.Session, m *discordgo.MessageCreate, parts []string
 		
 	// build the final lore output
 	// todo add error checking
-	lines := strings.Join(LOREADDGLOBALLIST[0:], "\n")
+	lines := strings.Join(LOREADDGLOBALLIST[0:], "\r\n")
 	
 	if len(lines) == 0 {
 		s.ChannelMessageSend(m.ChannelID, "Loreadd error: User entered a blank lore, aborting !loreadd.")
@@ -229,8 +229,7 @@ func loreAddEnd(s *discordgo.Session, m *discordgo.MessageCreate, parts []string
 		// write to file
 		w := bufio.NewWriter(file)
 		w.WriteString(lines)
-		w.WriteString("\r\n")
-						
+			
 		// log who added the lore
 		t := time.Now()
 		w.WriteString(t.Format("2006-01-02") + " by " + LOREADDUSER_USERNAME)
