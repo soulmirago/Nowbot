@@ -136,6 +136,44 @@ func loreStats(s *discordgo.Session, m *discordgo.MessageCreate, g *discordgo.Gu
 	return
 }
 
+// adds lores to database
+func loreAdd(s *discordgo.Session, m *discordgo.MessageCreate, g *discordgo.Guild) {
+	
+	// Send acknowledgement
+	log.Info("Debug: loreAdd start")
+	s.ChannelMessageSend(m.ChannelID, "Starting !loreadd program...")	
+	
+	// start program
+	itemname := strings.Join(parts[1:], " ")
+	s.ChannelMessageSend(m.ChannelID, "Error: functionality not available to !loreadd '" + itemname + "'")
+	
+	/* hardcoded for now, change to init file
+	dir := "D:\\Applications\\Nowbot\\lores"
+	log.Info("Directory: " + dir)
+	path := dir + "\\" + GLOBALLIST[lorenumber]
+	log.Info("Directory: " + path)
+	
+	file, err := os.Open(path)
+	if err != nil {
+		log.Info("Debug: loreStats file open problem")
+		return
+	}
+	defer file.Close()
+
+	var lines []string
+	scanner := bufio.NewScanner(file)
+
+	for scanner.Scan() {
+		lines = append(lines, scanner.Text())
+	}
+	
+	s.ChannelMessageSend(m.ChannelID, strings.Join(lines[0:], "\n"))
+	s.ChannelMessageSend(m.ChannelID, "====== Finshed outputing lore ======")
+	*/
+	return
+}
+
+
 // Handles bot operator messages
 func handleBotControlMessages(s *discordgo.Session, m *discordgo.MessageCreate, parts []string, g *discordgo.Guild, msg string) {
 	if scontains(parts[0], "!nowbot") {
@@ -183,8 +221,7 @@ func handleUserCommandMessages(s *discordgo.Session, m *discordgo.MessageCreate,
 			log.Info("Debug: User didn't enter an argument")
 			s.ChannelMessageSend(m.ChannelID, "Error on !loreadd, you need to enter an item name.")
 		} else {
-			itemname := strings.Join(parts[1:], " ")
-			s.ChannelMessageSend(m.ChannelID, "Error functionality not available to !loreadd '" + itemname + "'")
+			loreAdd(s, m, g)
 		}
 	}
 	log.Info("Debug: handleUserCommandMessages finished")
