@@ -116,7 +116,6 @@ func loreStats(s *discordgo.Session, m *discordgo.MessageCreate, g *discordgo.Gu
 	
 	// Send acknowledgement
 	log.Info("Debug: loreStats start")
-	s.ChannelMessageSend(m.ChannelID, "Lorenumber " + strconv.Itoa(lorenumber))	
 	
 	// hardcoded for now, change to init file
 	dir := "D:\\Applications\\Nowbot\\lores"
@@ -138,8 +137,9 @@ func loreStats(s *discordgo.Session, m *discordgo.MessageCreate, g *discordgo.Gu
 		lines = append(lines, scanner.Text())
 	}
 	
-	s.ChannelMessageSend(m.ChannelID, strings.Join(lines[0:], "\n") + "\n" + "====== Finshed outputing lore ======")
-	
+	output := "Lore #" + strconv.Itoa(lorenumber) + ": " + GLOBALLIST[lorenumber] + "\n" + strings.Join(lines[0:], "\n") + "\n" + "====== Finshed outputing lore ======"
+	s.ChannelMessageSend(m.ChannelID, output)	
+
 	return
 }
 
