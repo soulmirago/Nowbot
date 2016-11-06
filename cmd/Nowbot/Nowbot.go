@@ -138,7 +138,7 @@ func loreStats(s *discordgo.Session, m *discordgo.MessageCreate, g *discordgo.Gu
 	}
 	
 	itemname := strings.TrimSuffix(GLOBALLIST[lorenumber], ".txt")
-	output := "Lore #" + strconv.Itoa(lorenumber) + ":\n" + itemname + "\n" + strings.Join(lines[0:], "\n") + "\n" + "====== Finshed outputing lore ======"
+	output := "Lore #" + strconv.Itoa(lorenumber) + ":\n" + "Name: " + itemname + "\n" + strings.Join(lines[0:], "\n") + "\n" + "====== Finshed outputing lore ======"
 	s.ChannelMessageSend(m.ChannelID, output)	
 
 	return
@@ -228,8 +228,8 @@ func loreAddEnd(s *discordgo.Session, m *discordgo.MessageCreate, parts []string
 				
 		// write to file
 		w := bufio.NewWriter(file)
-		w.WriteString(lines)
-			
+		w.WriteString(lines + "\r\n")
+					
 		// log who added the lore
 		t := time.Now()
 		w.WriteString(t.Format("2006-01-02") + " by " + LOREADDUSER_USERNAME)
