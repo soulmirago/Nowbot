@@ -142,7 +142,7 @@ func loreStats(s *discordgo.Session, m *discordgo.MessageCreate, g *discordgo.Gu
 
 // Starts the bot listening to add lores to the database
 func loreAdd(s *discordgo.Session, m *discordgo.MessageCreate, parts []string, g *discordgo.Guild) {
-
+/*
 	// Send acknowledgement
 	log.Info("Debug: loreAdd start")
 	if len(parts) < 2 {
@@ -154,7 +154,7 @@ func loreAdd(s *discordgo.Session, m *discordgo.MessageCreate, parts []string, g
 		LOREADDUSER_ID = m.Author.ID
 		itemname := strings.Join(parts[1:], " ")			
 		s.ChannelMessageSend(m.ChannelID, "Error: functionality not available to !loreadd '" + itemname + "'")
-	}
+	}*/
 	return
 }
 
