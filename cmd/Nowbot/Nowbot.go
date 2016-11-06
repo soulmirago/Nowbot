@@ -219,7 +219,6 @@ func loreAddEnd(s *discordgo.Session, m *discordgo.MessageCreate, parts []string
 		path := dir + "\\" + LOREADDITEMNAME + ".txt"
 		log.Info("Directory: " + path)
 		
-		/*
 		file, err := os.Create(path)
 		if err != nil {
 			log.Info("Debug: loreStats file open problem")
@@ -228,13 +227,10 @@ func loreAddEnd(s *discordgo.Session, m *discordgo.MessageCreate, parts []string
 		defer file.Close()
 	
 		w := bufio.NewWriter(file)
-	
-		w.WriteString(itemname)
-		log.Info("Wrote to file: " + itemname)
-		
+		w.WriteString(lines)
+		w.WriteString("Timestamp " + "and " + LOREADDUSER_USERNAME)
 		w.Flush()
-	
-		*/
+		
 		s.ChannelMessageSend(m.ChannelID, "Finished inputting lore for '" + LOREADDITEMNAME + "' for " + LOREADDUSER_USERNAME + ".")
 	}
 	
