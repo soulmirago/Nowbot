@@ -226,7 +226,7 @@ func loreAddEnd(s *discordgo.Session, m *discordgo.MessageCreate, parts []string
 		}
 		defer file.Close()
 		
-		t = time.Now()
+		t := time.Now()
 		w := bufio.NewWriter(file)
 		w.WriteString(lines)
 		w.WriteString(t.Format("2006-01-02") + " by " + LOREADDUSER_USERNAME)
