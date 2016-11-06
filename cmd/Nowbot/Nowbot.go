@@ -36,9 +36,13 @@ var (
 	NOWBOT_ID string
 	GLOBALLIST []string
 	
+	LOREADDFLAG = false
 	LOREADDUSER_ID string
-	LOREADDGLOBALLIST []string
 	LOREADDSTARTTIME = time.Now()
+	LOREADDGLOBALLIST []string
+	LOREADDITEMNAME string
+	
+	
 )
 
 func scontains(key string, options ...string) bool {
@@ -145,14 +149,24 @@ func loreAddStart(s *discordgo.Session, m *discordgo.MessageCreate, parts []stri
 
 	// Send acknowledgement
 	log.Info("Debug: loreAddStart start")
+	
+	// check to see if a loreadd is already running
+	
+	if LOREADDFLAG {
+		s.ChannelMessageSend(m.ChannelID, "Error on !loreadd, program already running, wait until !loreend.")
+		return
+	}
+		
 	if len(parts) < 2 {
 		log.Info("Debug: User didn't enter an argument")
 		s.ChannelMessageSend(m.ChannelID, "Error on !loreadd, you need to enter an item name.")
 	} else {
 		s.ChannelMessageSend(m.ChannelID, "Starting !loreadd program...")	
+		LOREADDFLAG = true
 		LOREADDSTARTTIME = time.Now()
-		LOREADDUSER_ID = m.Author.ID
+		LOREADDUSER_ID = m.Author.ID		
 		itemname := strings.Join(parts[1:], " ")			
+		LOREADDITEMNAME = itemname
 		s.ChannelMessageSend(m.ChannelID, "Error: functionality not available to !loreadd '" + itemname + "'")
 	}
 	return
@@ -161,6 +175,11 @@ func loreAddStart(s *discordgo.Session, m *discordgo.MessageCreate, parts []stri
 // Checks incoming messages to see if they need to be added to an incoming lore
 func loreAddInput(s *discordgo.Session, m *discordgo.MessageCreate, parts []string, g *discordgo.Guild, msg string) {
 
+	// quit if loreadd not running or if a different user
+	if (LOREADDFLAG == false || m.Author.ID != LOREADDUSER_ID) {
+		return
+	}
+	
 	// ignore all lines starting with !, since we don't want to write to the lorefile user commands
 	if (m.Content[0] == '!') {
 		return
@@ -182,15 +201,23 @@ func loreAddEnd(s *discordgo.Session, m *discordgo.MessageCreate, parts []string
 		s.ChannelMessageSend(m.ChannelID, "Error, !loreadd not running for " + m.Author.Username + ".")
 		return
 	}
-	
-	// reset the input variables for next time
-	LOREADDSTARTTIME = time.Now()
-	LOREADDUSER_ID = "0"
+		
+	// build the final lore output
+	// todo add error checking
 	lines := strings.Join(LOREADDGLOBALLIST[0:], "\n")
+	
+	// output lore
 	s.ChannelMessageSend(m.ChannelID, "Full lore was:")
 	s.ChannelMessageSend(m.ChannelID, lines)
-	s.ChannelMessageSend(m.ChannelID, "Finished inputting lore.")
-		
+	s.ChannelMessageSend(m.ChannelID, "Finished inputting lore for '" + LOREADDITEMNAME + "'.")
+	
+	// reset the input variables for next time
+	LOREADDFLAG = false
+	LOREADDUSER_ID = "0"
+	LOREADDSTARTTIME = time.Now()
+	LOREADDGLOBALLIST = nil
+	LOREADDITEMNAME = ""
+	
 	/*// Send acknowledgement
 	log.Info("Debug: loreAdd start")
 	s.ChannelMessageSend(m.ChannelID, "Starting !loreadd program...")	
@@ -341,11 +368,9 @@ func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 	
-	// If author is currently adding a lore, run the lore program
-	if (m.Author.ID == LOREADDUSER_ID) {
-		loreAddInput(s, m, parts, guild, msg)
-	}
-	
+	// check to see if user is adding a lore
+	loreAddInput(s, m, parts, guild, msg)
+		
 	// exit if message does not contain command character @ mention
 	if (m.Content[0] != '!' && len(m.Mentions) < 1) {
 		return
