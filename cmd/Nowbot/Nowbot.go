@@ -186,7 +186,7 @@ func loreAddEnd(s *discordgo.Session, m *discordgo.MessageCreate, parts []string
 	// reset the input variables for next time
 	LOREADDSTARTTIME = time.Now()
 	LOREADDUSER_ID = "0"
-	lines = strings.Join(LOREADDGLOBALLIST[0:], "\n")
+	lines := strings.Join(LOREADDGLOBALLIST[0:], "\n")
 	s.ChannelMessageSend(m.ChannelID, "Full lore was:")
 	s.ChannelMessageSend(m.ChannelID, lines)
 	s.ChannelMessageSend(m.ChannelID, "Finished inputting lore.")
