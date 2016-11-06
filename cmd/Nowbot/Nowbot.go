@@ -91,7 +91,7 @@ func loreQuery(s *discordgo.Session, m *discordgo.MessageCreate, parts []string,
 			}
 			if matched {
 				lorecount += 1
-				lorelist = append(lorelist, file.Name())
+				lorelist = append(lorelist, strings.TrimSuffix(file.Name(), ".txt")
 				lines = append(lines, strconv.Itoa(lorecount) + " :: " + lorelist[lorecount])				
 				log.Info("File contains: " + query + " : " + file.Name())
 			}
@@ -120,7 +120,7 @@ func loreStats(s *discordgo.Session, m *discordgo.MessageCreate, g *discordgo.Gu
 	// hardcoded for now, change to init file
 	dir := "D:\\Applications\\Nowbot\\lores"
 	log.Info("Directory: " + dir)
-	path := dir + "\\" + GLOBALLIST[lorenumber]
+	path := dir + "\\" + GLOBALLIST[lorenumber] + ".txt"
 	log.Info("Directory: " + path)
 	
 	file, err := os.Open(path)
