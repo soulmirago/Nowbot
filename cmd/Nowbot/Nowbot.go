@@ -71,7 +71,8 @@ func loreQuery(s *discordgo.Session, m *discordgo.MessageCreate, parts []string,
 	// iterate over all filenames in the directory
 	lorecount := 0
 	loremax := 6
-	lorelist := []string{""}	
+	lorelist := []string{""}
+	lines := []string{""}
 	for _ , file := range files {
 		if file.Mode().IsRegular() {
 			matched, err := regexp.MatchString(query, strings.ToLower(file.Name()))
@@ -83,15 +84,17 @@ func loreQuery(s *discordgo.Session, m *discordgo.MessageCreate, parts []string,
 			if matched {
 				lorecount += 1
 				lorelist = append(lorelist, file.Name())
-				s.ChannelMessageSend(m.ChannelID, strconv.Itoa(lorecount) + " :: " + lorelist[lorecount])
+				lines = append(lines, strconv.Itoa(lorecount) + " :: " + lorelist[lorecount])				
 				log.Info("File contains: " + query + " : " + file.Name())
 			}
 			if lorecount > loremax {
-				s.ChannelMessageSend(m.ChannelID, "Too many results, ending search.")
+				lines = append(lines, "Too many results, ending search.")
 				break
 			}
 		}
 	}
+	//output results
+	s.ChannelMessageSend(m.ChannelID, strings.Join(lines[0:], "\n"))
 	if lorecount == 0 {
 		s.ChannelMessageSend(m.ChannelID, "No hits on " + query + ".")
 	} else {
@@ -158,16 +161,20 @@ func handleUserCommandMessages(s *discordgo.Session, m *discordgo.MessageCreate,
 	}
 	if scontains(parts[0], "!lorestats") {
 		log.Info("Debug: !lorestats trying to output")
-		lorehit, err := strconv.Atoi(parts[1])
-		log.Info(err)
-		if lorehit > len(GLOBALLIST)-1 {
-			log.Info("Debug: !lorestats argument is bigger than globallist length")			
-			s.ChannelMessageSend(m.ChannelID, "Error on !lorestats, the item number you entered is too high.")
-		} else if lorehit == 0 {
-			log.Info("Debug: !lorestats argument is zero")			
-			s.ChannelMessageSend(m.ChannelID, "Error on !lorestats, you entered a zero item number.")
-		} else {	
-			loreStats(s, m, g, lorehit)
+		if len(parts) < 2 {
+			log.Info("Debug: Lorestats user didn't enter an argument")
+			s.ChannelMessageSend(m.ChannelID, "Error on !lorestats, you need to enter a lore number.")
+		} else {
+			lorehit, _ := strconv.Atoi(parts[1])
+			if lorehit > len(GLOBALLIST)-1 {
+				log.Info("Debug: !lorestats argument is bigger than globallist length")			
+				s.ChannelMessageSend(m.ChannelID, "Error on !lorestats, the item number you entered is too high.")
+			} else if lorehit == 0 {
+				log.Info("Debug: !lorestats argument is zero")			
+				s.ChannelMessageSend(m.ChannelID, "Error on !lorestats, you entered a zero item number.")
+			} else {	
+				loreStats(s, m, g, lorehit)
+			}
 		}
 	}
 	log.Info("Debug: handleUserCommandMessages finished")
