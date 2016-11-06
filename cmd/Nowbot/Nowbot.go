@@ -161,16 +161,20 @@ func handleUserCommandMessages(s *discordgo.Session, m *discordgo.MessageCreate,
 	}
 	if scontains(parts[0], "!lorestats") {
 		log.Info("Debug: !lorestats trying to output")
-		lorehit, err := strconv.Atoi(parts[1])
-		log.Info(err)
-		if lorehit > len(GLOBALLIST)-1 {
-			log.Info("Debug: !lorestats argument is bigger than globallist length")			
-			s.ChannelMessageSend(m.ChannelID, "Error on !lorestats, the item number you entered is too high.")
-		} else if lorehit == 0 {
-			log.Info("Debug: !lorestats argument is zero")			
-			s.ChannelMessageSend(m.ChannelID, "Error on !lorestats, you entered a zero item number.")
-		} else {	
-			loreStats(s, m, g, lorehit)
+		if len(parts) < 2 {
+			log.Info("Debug: Lorestats user didn't enter an argument")
+			s.ChannelMessageSend(m.ChannelID, "Error on !lorestats, you need to enter a lore number.")
+		} else {
+			lorehit, _ := strconv.Atoi(parts[1])
+			if lorehit > len(GLOBALLIST)-1 {
+				log.Info("Debug: !lorestats argument is bigger than globallist length")			
+				s.ChannelMessageSend(m.ChannelID, "Error on !lorestats, the item number you entered is too high.")
+			} else if lorehit == 0 {
+				log.Info("Debug: !lorestats argument is zero")			
+				s.ChannelMessageSend(m.ChannelID, "Error on !lorestats, you entered a zero item number.")
+			} else {	
+				loreStats(s, m, g, lorehit)
+			}
 		}
 	}
 	log.Info("Debug: handleUserCommandMessages finished")
