@@ -114,7 +114,7 @@ func loreStats(s *discordgo.Session, m *discordgo.MessageCreate, g *discordgo.Gu
 	// hardcoded for now, change to init file
 	dir := "//mnt//disks//nowbot-storage//lores"
 	log.Info("Directory: " + dir)
-	path := dir + "\\" + GLOBALLIST[lorenumber]
+	path := dir + "//" + GLOBALLIST[lorenumber]
 	log.Info("Directory: " + path)
 
 	file, err := os.Open(path)
