@@ -63,7 +63,7 @@ func loreQuery(s *discordgo.Session, m *discordgo.MessageCreate, parts []string,
 	query := strings.Join(parts[1:], " ")
 	s.ChannelMessageSend(m.ChannelID, "Nowbot searching lores for "+m.Author.Username+" for item '"+query+"'")
 	// hardcoded for now, change to init file
-	dir := "D:\\Applications\\Nowbot\\lores"
+	dir := "//mnt//disks//nowbot-storage//lores"
 
 	// create directory
 	files, _ := ioutil.ReadDir(dir)
@@ -112,7 +112,7 @@ func loreStats(s *discordgo.Session, m *discordgo.MessageCreate, g *discordgo.Gu
 	s.ChannelMessageSend(m.ChannelID, "Lorenumber "+strconv.Itoa(lorenumber))
 
 	// hardcoded for now, change to init file
-	dir := "D:\\Applications\\Nowbot\\lores"
+	dir := "//mnt//disks//nowbot-storage//lores"
 	log.Info("Directory: " + dir)
 	path := dir + "\\" + GLOBALLIST[lorenumber]
 	log.Info("Directory: " + path)
