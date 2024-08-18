@@ -112,10 +112,10 @@ func loreStats(s *discordgo.Session, m *discordgo.MessageCreate, g *discordgo.Gu
 	s.ChannelMessageSend(m.ChannelID, "Lorenumber "+strconv.Itoa(lorenumber))
 
 	// hardcoded for now, change to init file
-	dir := "//mnt//disks//nowbot-storage//lores"
-	log.Info("Directory: " + dir)
-	path := dir + "//" + GLOBALLIST[lorenumber]
-	log.Info("Directory: " + path)
+	dir := "//mnt//disks//nowbot-storage//lores//"
+	log.Info("Lorestats directory pre-append: " + dir)
+	path := dir + GLOBALLIST[lorenumber]
+	log.Info("Lorestats directory post-append: " + path)
 
 	file, err := os.Open(path)
 	if err != nil {
