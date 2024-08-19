@@ -1,57 +1,59 @@
 # Nowbot
 Nowbot
 
-HOW TO INSTALL THE BOT
-1. Download and build the code
+# HOW TO INSTALL THE BOT
 
-    ```
-    go install github.com/USER/Nowbot/cmd/Nowbot@latest
-    ```
+## 1. Download and build the code
 
-3. Create systemd service file to run the binary as a service
+```
+go install github.com/USER/Nowbot/cmd/Nowbot@latest
+```
 
-    See: https://medium.com/@david.franko1998/automating-linux-scripts-with-systemd-a-quickstart-guide-b00a143c31e5
+## 2. Create systemd service file to run the binary as a service
 
-    Create the service file, replacing [username] with actual user name
-   
-    ```
-    sudo nano  /etc/systemd/system/Nowbot.service
-    ```
+See: https://medium.com/@david.franko1998/automating-linux-scripts-with-systemd-a-quickstart-guide-b00a143c31e5
 
-    Insert the following content:
-    ```  
-    [Unit]
-    Description=Nowbot Discord Bot
-    Wants=network-online.target
-    After=network.target
-    
-    [Service]
-    ExecStart=/home/[user]/go/bin/Nowbot -t "Bot [TOKEN]" -o [OWNER_ID]
-    User=[username]
-    Restart=on-failure
-    RestartSec=10s
-    StartLimitBurst=5
-    StandardOutput=console
-    
-    [Install]
-    WantedBy=multi-user.target
-    ```
+Create the service file, replacing [username] with actual user name
 
-5. Enable the service
-    ```
-    sudo systemctl daemon-reload
-    sudo systemctl enable Nowbot.service
-    sudo systemctl start Nowbot.service
-    ```
+```
+sudo nano  /etc/systemd/system/Nowbot.service
+```
 
-5. Monitor status of the service or see logs
-    ```
-    systemctl status Nowbot.service
-    journalctl -r -u Nowbot.service
-    ```
+Insert the following content:
+```  
+[Unit]
+Description=Nowbot Discord Bot
+Wants=network-online.target
+After=network.target
+
+[Service]
+ExecStart=/home/[user]/go/bin/Nowbot -t "Bot [TOKEN]" -o [OWNER_ID]
+User=[username]
+Restart=on-failure
+RestartSec=10s
+StartLimitBurst=5
+StandardOutput=console
+
+[Install]
+WantedBy=multi-user.target
+```
+
+## 3. Enable the service
+```
+sudo systemctl daemon-reload
+sudo systemctl enable Nowbot.service
+sudo systemctl start Nowbot.service
+```
+
+## 4. Monitor status of the service or see logs
+```
+systemctl status Nowbot.service
+journalctl -r -u Nowbot.service
+```
 
 
-6. HOW TO RUN THE BOT MANUALLY IF NOT USING SYSTEMD
+# HOW TO RUN THE BOT MANUALLY IF NOT USING SYSTEMD
+
 ```
 Nowbot -t "Bot [TOKEN]" -o [OWNER_ID]
 ```
