@@ -66,6 +66,13 @@ func utilGetMentioned(s *discordgo.Session, m *discordgo.MessageCreate) *discord
 func loreQuery(s *discordgo.Session, m *discordgo.MessageCreate, parts []string, g *discordgo.Guild, msg string) []string {
 	log.Info("Debug: loreQuery start")
 
+	// return if user enters a blank string
+	if len(parts) < 2 {
+		log.Info("Debug: User didn't enter an argument in !lore")
+		s.ChannelMessageSend(m.ChannelID, "Error on !lore, you entered a blank search.")
+		return
+	}
+
 	// combine string to get query (excluding the command word)
 	query := strings.Join(parts[1:], " ")
 	s.ChannelMessageSend(m.ChannelID, "Nowbot searching lores for "+m.Author.Username+" for item '"+query+"'")
@@ -138,7 +145,7 @@ func loreStats(s *discordgo.Session, m *discordgo.MessageCreate, g *discordgo.Gu
 	}
 
 	itemname := strings.TrimSuffix(GLOBALLIST[lorenumber], ".txt")
-	output := "```Lore #" + strconv.Itoa(lorenumber) + ":" + itemname + "```" + "```" + strings.Join(lines[0:], "\n") + "\n" + "```"
+	output := "```Lore #" + strconv.Itoa(lorenumber) + "   : " + itemname + "```" + "```" + strings.Join(lines[0:], "\n") + "\n" + "```"
 	s.ChannelMessageSend(m.ChannelID, output)
 
 	return
