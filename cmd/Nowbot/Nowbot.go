@@ -82,7 +82,7 @@ func loreQuery(s *discordgo.Session, m *discordgo.MessageCreate, parts []string,
 	lorelist := []string{""}
 	lines := []string{""}
 	for _, file := range files {
-		if file.Mode().IsRegular() {
+		if file.Type().IsRegular() {
 			matched, err := regexp.MatchString(query, strings.ToLower(file.Name()))
 			if err != nil {
 				log.WithFields(log.Fields{
@@ -177,7 +177,7 @@ func loreAddStart(s *discordgo.Session, m *discordgo.MessageCreate, parts []stri
 func loreAddInput(s *discordgo.Session, m *discordgo.MessageCreate, parts []string, g *discordgo.Guild, msg string) {
 
 	// quit if loreadd not running or if a different user
-	if LOREADDFLAG == false || m.Author.ID != LOREADDUSER_ID {
+	if !LOREADDFLAG || m.Author.ID != LOREADDUSER_ID {
 		return
 	}
 
