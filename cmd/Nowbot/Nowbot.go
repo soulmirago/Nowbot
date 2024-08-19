@@ -66,13 +66,6 @@ func utilGetMentioned(s *discordgo.Session, m *discordgo.MessageCreate) *discord
 func loreQuery(s *discordgo.Session, m *discordgo.MessageCreate, parts []string, g *discordgo.Guild, msg string) []string {
 	log.Info("Debug: loreQuery start")
 
-	// return if user enters a blank string
-	if len(parts) < 2 {
-		log.Info("Debug: User didn't enter an argument in !lore")
-		s.ChannelMessageSend(m.ChannelID, "Error on !lore, you entered a blank search.")
-		return
-	}
-
 	// combine string to get query (excluding the command word)
 	query := strings.Join(parts[1:], " ")
 	s.ChannelMessageSend(m.ChannelID, "Nowbot searching lores for "+m.Author.Username+" for item '"+query+"'")
@@ -277,13 +270,19 @@ func handleUserCommandMessages(s *discordgo.Session, m *discordgo.MessageCreate,
 	}
 	// Search database for hits
 	if scontains(parts[0], "!lore") {
-		log.Info("Debug: !lore trying to output")
-		locallorelist := loreQuery(s, m, parts, g, msg)
-		if locallorelist == nil {
-			log.Info("Debug: lorequery failed")
+		// return if user enters a blank string
+		if len(parts) < 2 {
+			log.Info("Debug: User didn't enter an argument in !lore")
+			s.ChannelMessageSend(m.ChannelID, "Error on !lore, you entered a blank search.")
 		} else {
-			GLOBALLIST = locallorelist
-			log.Info(strings.Join(GLOBALLIST[1:], " "))
+			log.Info("Debug: !lore trying to output")
+			locallorelist := loreQuery(s, m, parts, g, msg)
+			if locallorelist == nil {
+				log.Info("Debug: lorequery failed")
+			} else {
+				GLOBALLIST = locallorelist
+				log.Info(strings.Join(GLOBALLIST[1:], " "))
+			}
 		}
 	}
 	// return results from search on database
