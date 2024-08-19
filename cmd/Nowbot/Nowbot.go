@@ -138,7 +138,7 @@ func loreStats(s *discordgo.Session, m *discordgo.MessageCreate, g *discordgo.Gu
 	}
 
 	itemname := strings.TrimSuffix(GLOBALLIST[lorenumber], ".txt")
-	output := "Lore #" + strconv.Itoa(lorenumber) + ":\n" + "```Name: " + itemname + "\n" + strings.Join(lines[0:], "\n") + "\n" + "```"
+	output := "```Lore #" + strconv.Itoa(lorenumber) + ":" + itemname + "```" + "```" + strings.Join(lines[0:], "\n") + "\n" + "```"
 	s.ChannelMessageSend(m.ChannelID, output)
 
 	return
