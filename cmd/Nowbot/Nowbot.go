@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"os/signal"
 
@@ -36,6 +35,14 @@ var (
 	OWNER      string
 	NOWBOT_ID  string
 	GLOBALLIST []string
+
+	// Global variables for Lorebot
+	LOREADDFLAG          = false
+	LOREADDUSER_ID       string
+	LOREADDUSER_USERNAME string
+	LOREADDSTARTTIME     = time.Now()
+	LOREADDGLOBALLIST    []string
+	LOREADDITEMNAME      string
 )
 
 func scontains(key string, options ...string) bool {
@@ -66,12 +73,12 @@ func loreQuery(s *discordgo.Session, m *discordgo.MessageCreate, parts []string,
 	dir := "//mnt//disks//nowbot-storage//lores"
 
 	// create directory
-	files, _ := ioutil.ReadDir(dir)
+	files, _ := os.ReadDir(dir)
 	log.Info("Directory: " + dir)
 
 	// iterate over all filenames in the directory
 	lorecount := 0
-	loremax := 6
+	loremax := 10
 	lorelist := []string{""}
 	lines := []string{""}
 	for _, file := range files {
@@ -84,7 +91,7 @@ func loreQuery(s *discordgo.Session, m *discordgo.MessageCreate, parts []string,
 			}
 			if matched {
 				lorecount += 1
-				lorelist = append(lorelist, file.Name())
+				lorelist = append(lorelist, strings.TrimSuffix(file.Name(), ".txt"))
 				lines = append(lines, strconv.Itoa(lorecount)+" :: "+lorelist[lorecount])
 				log.Info("File contains: " + query + " : " + file.Name())
 			}
@@ -94,8 +101,8 @@ func loreQuery(s *discordgo.Session, m *discordgo.MessageCreate, parts []string,
 			}
 		}
 	}
-	//output results
-	s.ChannelMessageSend(m.ChannelID, strings.Join(lines[0:], "\n"))
+	//output results using code-markdown format
+	s.ChannelMessageSend(m.ChannelID, "```"+strings.Join(lines[0:], "\n")+"```")
 	if lorecount == 0 {
 		s.ChannelMessageSend(m.ChannelID, "No hits on "+query+".")
 	} else {
@@ -109,12 +116,11 @@ func loreStats(s *discordgo.Session, m *discordgo.MessageCreate, g *discordgo.Gu
 
 	// Send acknowledgement
 	log.Info("Debug: loreStats start")
-	s.ChannelMessageSend(m.ChannelID, "Lorenumber "+strconv.Itoa(lorenumber))
 
 	// hardcoded for now, change to init file
 	dir := "//mnt//disks//nowbot-storage//lores//"
 	log.Info("Lorestats directory pre-append: " + dir)
-	path := dir + GLOBALLIST[lorenumber]
+	path := dir + GLOBALLIST[lorenumber] + ".txt"
 	log.Info("Lorestats directory post-append: " + path)
 
 	file, err := os.Open(path)
@@ -131,8 +137,115 @@ func loreStats(s *discordgo.Session, m *discordgo.MessageCreate, g *discordgo.Gu
 		lines = append(lines, scanner.Text())
 	}
 
-	s.ChannelMessageSend(m.ChannelID, "```"+strings.Join(lines[0:], "\n")+"```")
-	s.ChannelMessageSend(m.ChannelID, "====== Finshed outputing lore ======")
+	itemname := strings.TrimSuffix(GLOBALLIST[lorenumber], ".txt")
+	output := "Lore #" + strconv.Itoa(lorenumber) + ":\n" + "```Name: " + itemname + "\n" + strings.Join(lines[0:], "\n") + "\n" + "```"
+	s.ChannelMessageSend(m.ChannelID, output)
+
+	return
+}
+
+// Starts the bot listening to add lores to the database
+func loreAddStart(s *discordgo.Session, m *discordgo.MessageCreate, parts []string, g *discordgo.Guild) {
+
+	// Send acknowledgement
+	log.Info("Debug: loreAddStart start")
+
+	// check to see if a loreadd is already running
+
+	if LOREADDFLAG {
+		s.ChannelMessageSend(m.ChannelID, "Error on !loreadd, program already running for "+LOREADDUSER_USERNAME+", wait until !loreend.")
+		return
+	}
+
+	if len(parts) < 2 {
+		log.Info("Debug: User didn't enter an argument")
+		s.ChannelMessageSend(m.ChannelID, "Error on !loreadd, you need to enter an item name.")
+	} else {
+		LOREADDFLAG = true
+		LOREADDSTARTTIME = time.Now()
+		LOREADDUSER_ID = m.Author.ID
+		LOREADDUSER_USERNAME = m.Author.Username
+		itemname := strings.Join(parts[1:], " ")
+		LOREADDITEMNAME = itemname
+		s.ChannelMessageSend(m.ChannelID, "Adding lore for '"+itemname+"' for "+m.Author.Username+". \n"+"Paste information and type !loreend to end.")
+	}
+
+	return
+}
+
+// Checks incoming messages to see if they need to be added to an incoming lore
+func loreAddInput(s *discordgo.Session, m *discordgo.MessageCreate, parts []string, g *discordgo.Guild, msg string) {
+
+	// quit if loreadd not running or if a different user
+	if LOREADDFLAG == false || m.Author.ID != LOREADDUSER_ID {
+		return
+	}
+
+	// ignore all lines starting with !, since we don't want to write to the lorefile user commands
+	if m.Content[0] == '!' {
+		return
+	}
+
+	// build the lore
+	LOREADDGLOBALLIST = append(LOREADDGLOBALLIST, msg)
+	log.Info("Debug: loreAddInput adding:" + msg)
+
+	return
+}
+
+// adds lores to database
+func loreAddEnd(s *discordgo.Session, m *discordgo.MessageCreate, parts []string, g *discordgo.Guild) {
+
+	log.Info("Debug: loreAddEnd start")
+
+	if m.Author.ID != LOREADDUSER_ID {
+		s.ChannelMessageSend(m.ChannelID, "Error, !loreadd not running for "+m.Author.Username+".")
+		return
+	}
+
+	// build the final lore output
+	// todo add error checking
+	lines := strings.Join(LOREADDGLOBALLIST[0:], "\r\n")
+
+	if len(lines) == 0 {
+		s.ChannelMessageSend(m.ChannelID, "Loreadd error: User entered a blank lore, aborting !loreadd.")
+	} else {
+		// output lore for debug
+		//s.ChannelMessageSend(m.ChannelID, "Full lore was:" + "\n" + lines)
+
+		// hardcoded for now, change to init file
+		dir := "//mnt//disks//nowbot-storage//lores//"
+		log.Info("Loreadd directory: " + dir)
+		path := dir + "//" + LOREADDITEMNAME + ".txt"
+		log.Info("Loreadd item filename: " + path)
+
+		file, err := os.Create(path)
+		if err != nil {
+			log.Info("Debug: loreadd file open problem")
+			return
+		}
+		defer file.Close()
+
+		// write to file
+		w := bufio.NewWriter(file)
+		w.WriteString(lines + "\r\n")
+
+		// log who added the lore
+		t := time.Now()
+		w.WriteString(t.Format("2006-01-02") + " by " + LOREADDUSER_USERNAME)
+
+		w.Flush()
+
+		s.ChannelMessageSend(m.ChannelID, "Finished inputting lore for '"+LOREADDITEMNAME+"' for "+LOREADDUSER_USERNAME+".")
+	}
+
+	// reset the input variables for next time
+	LOREADDFLAG = false
+	LOREADDUSER_ID = "0"
+	LOREADDUSER_USERNAME = ""
+	LOREADDSTARTTIME = time.Now()
+	LOREADDGLOBALLIST = nil
+	LOREADDITEMNAME = ""
 
 	return
 }
@@ -150,6 +263,12 @@ func handleBotControlMessages(s *discordgo.Session, m *discordgo.MessageCreate, 
 
 // Handles user messages
 func handleUserCommandMessages(s *discordgo.Session, m *discordgo.MessageCreate, parts []string, g *discordgo.Guild, msg string) {
+
+	// If loreAdd is running and user enters command to end, run the end function.
+	if scontains(parts[0], "!loreend") {
+		loreAddEnd(s, m, parts, g)
+	}
+	// Search database for hits
 	if scontains(parts[0], "!lore") {
 		log.Info("Debug: !lore trying to output")
 		locallorelist := loreQuery(s, m, parts, g, msg)
@@ -160,6 +279,7 @@ func handleUserCommandMessages(s *discordgo.Session, m *discordgo.MessageCreate,
 			log.Info(strings.Join(GLOBALLIST[1:], " "))
 		}
 	}
+	// return results from search on database
 	if scontains(parts[0], "!lorestats") {
 		log.Info("Debug: !lorestats trying to output")
 		if len(parts) < 2 {
@@ -178,6 +298,12 @@ func handleUserCommandMessages(s *discordgo.Session, m *discordgo.MessageCreate,
 			}
 		}
 	}
+
+	// start the program to add a new lore
+	if scontains(parts[0], "!loreadd") {
+		loreAddStart(s, m, parts, g)
+	}
+
 	log.Info("Debug: handleUserCommandMessages finished")
 }
 
@@ -209,13 +335,15 @@ func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 
-	// exit if message is nil, or if does not contain command character @ mention
-	if len(m.Content) <= 0 || (m.Content[0] != '!' && len(m.Mentions) < 1) {
+	// exit if message is nil
+	if len(m.Content) <= 0 {
 		return
 	}
 
+	// clean up message
 	msg := strings.Replace(m.ContentWithMentionsReplaced(), s.State.Ready.User.Username, "username", 1)
 	parts := strings.Split(strings.ToLower(msg), " ")
+
 	channel, _ := discord.State.Channel(m.ChannelID)
 	if channel == nil {
 		log.WithFields(log.Fields{
@@ -232,6 +360,14 @@ func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 			"channel": channel,
 			"message": m.ID,
 		}).Warning("Failed to grab guild")
+		return
+	}
+
+	// check to see if user is adding a lore
+	loreAddInput(s, m, parts, guild, msg)
+
+	// exit if message does not contain command character @ mention
+	if m.Content[0] != '!' && len(m.Mentions) < 1 {
 		return
 	}
 
